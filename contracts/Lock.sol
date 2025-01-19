@@ -1,56 +1,54 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.28;
-import "hardhat/console.sol";
 
+// Uncomment this line to use console.log
+// import "hardhat/console.sol";
 
 contract Lock {
-    struct Content {
+   
+    struct content{
         string userStatement;
         string queryPoint;
-        uint256 time;
-    }
+        uint time;
 
-    struct Connection {
+    }
+    struct connection{
         string url;
     }
 
-    mapping(address => Content[]) private contentList; // Store content by user
-    mapping(address => Connection[]) private connectionString; // Store connection strings by user
-    mapping(address => mapping(address => bool)) private ownership; // Permission mapping
+    
+    mapping (address=>content[]) contentList;
+    mapping (address=> connection[] ) private connectionString;
+    mapping (address=>mapping(address=>bool))ownership;
 
-    // Function to upload content to a user's content list
-   function upload(
-    address _user,
-    string memory _userStatement,
-    string memory _queryPoint
-) public {
-    console.log("User Statement is: %s", _userStatement); // Debug log
-    contentList[_user].push(Content(_userStatement, _queryPoint, block.timestamp));
-}
+    function upload(address _user,string memory _userStatement,string memory _queryPoint)public{
+        require(ownership[_user][msg.sender],"You dont have access to upload to his database");
+       
+            contentList[msg.sender].push(content(_userStatement,_queryPoint,block.timestamp));
 
-
-    // Function to grant permission to another address
-    function addPermission(address _address) public {
-        ownership[msg.sender][_address] = true;
     }
+    function addPermission(address _add) public{
+        ownership[msg.sender][_add]=true;
+    }
+    function viewConnectionString(address _add)public view returns(connection []memory){
+        require(ownership[_add][msg.sender]);
+        
+    
+        if(connectionString[_add].length>0){
 
-    // Function to view a user's connection strings (requires permission)
-    function viewConnectionString(address _user) public view returns (Connection[] memory) {
-        require(
-            ownership[_user][msg.sender],
-            "You don't have permission to view this user's connection strings"
-        );
-
-        if (connectionString[_user].length > 0) {
-            return connectionString[_user];
-        } else {
+            return connectionString[_add];
+            
+        }
+        else{
             revert("No connection string found");
         }
     }
-
-    // Function to view all content of a user (requires permission)
-    function viewAll(address _user) public view returns (Content[] memory) {
+    function viewAll(address _add) view public returns(content [] memory) {
+        require(ownership[_add][msg.sender]);
+        return contentList[_add];
        
-        return contentList[_user];
     }
+
+   
+    
 }
