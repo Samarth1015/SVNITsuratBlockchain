@@ -1,20 +1,16 @@
 "use client";
 import React, { useState } from "react";
 
+import Sideelement from "./component/Sideelement";
+
 const ChatGPTInterface = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(true);
 
+  //function to handle send
   const handleSend = () => {
-    if (input.trim() === "") return;
-
-    setMessages((prev) => [
-      ...prev,
-      { sender: "user", text: input },
-      { sender: "bot", text: "This is a bot response!" }, // Add bot response logic here
-    ]);
-    setInput("");
+    // after response there will be  a fucntion that return the query and statement which will be added in blockchain
   };
 
   return (
@@ -23,20 +19,9 @@ const ChatGPTInterface = () => {
         isDarkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
       }`}
     >
-      {/* Dark Mode Toggle */}
-      <div className="p-4 flex justify-end">
-        <button
-          className={`px-4 py-2 text-sm rounded-lg ${
-            isDarkMode
-              ? "bg-gray-700 hover:bg-gray-600 text-white"
-              : "bg-gray-300 hover:bg-gray-200 text-black"
-          }`}
-          onClick={() => setIsDarkMode((prev) => !prev)}
-        >
-          {isDarkMode ? "Light Mode" : "Dark Mode"}
-        </button>
+      <div>
+        <Sideelement></Sideelement>
       </div>
-
       {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg, index) => (

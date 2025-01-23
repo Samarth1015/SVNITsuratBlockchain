@@ -5,6 +5,7 @@ export default {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./samarth/**/*.{js,ts,jsx,tsx,mdx}",
+    "./samarth/component/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
