@@ -13,6 +13,7 @@ contract Lock {
     }
     struct connection {
         string url;
+        string name;
     }
     struct addressUser {
         address add;
@@ -48,8 +49,9 @@ contract Lock {
     }
 
     function addPermission(address _add) public {
-        require(msg.sender == _add, "you are only owner");
-        if (prevownership[msg.sender][_add]) {
+        if (msg.sender == _add) {
+            revert("you are only owner");
+        } else if (prevownership[msg.sender][_add]) {
             ownership[msg.sender][_add] = true;
         } else {
             ownership[msg.sender][_add] = true;
@@ -124,7 +126,6 @@ contract Lock {
     }
 
     function removeAccess(address add) public {
-        require(msg.sender == add, "you re only owner");
         require(
             ownership[msg.sender][add],
             "you already didnt give access to this account "
