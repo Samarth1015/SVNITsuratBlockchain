@@ -17,6 +17,7 @@ contract Lock {
     }
     struct addressUser {
         address add;
+        string name;
     }
 
     mapping(address => content[]) contentList;
@@ -48,14 +49,14 @@ contract Lock {
         );
     }
 
-    function addPermission(address _add) public {
+    function addPermission(address _add, string memory name) public {
         if (msg.sender == _add) {
             revert("you are only owner");
         } else if (prevownership[msg.sender][_add]) {
             ownership[msg.sender][_add] = true;
         } else {
             ownership[msg.sender][_add] = true;
-            access[msg.sender].push(addressUser(_add));
+            access[msg.sender].push(addressUser(_add, name));
             prevownership[msg.sender][_add] = true;
         }
     }
@@ -89,19 +90,23 @@ contract Lock {
         uint256 userLength = access[msg.sender].length;
         uint256 validCount = 0;
 
+        // Count the number of valid accesses
         for (uint256 i = 0; i < userLength; i++) {
             if (ownership[msg.sender][access[msg.sender][i].add]) {
                 validCount++;
             }
         }
 
-        string[] memory user = new string[](validCount);
+        // Create an array of double the size (for address and name)
+        string[] memory user = new string[](validCount * 2);
         uint256 index = 0;
 
+        // Populate the user array with valid address-name pairs
         for (uint256 i = 0; i < userLength; i++) {
             if (ownership[msg.sender][access[msg.sender][i].add]) {
                 user[index] = addressToString(access[msg.sender][i].add);
-                index++;
+                user[index + 1] = access[msg.sender][i].name;
+                index += 2;
             }
         }
 
