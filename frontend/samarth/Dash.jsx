@@ -66,10 +66,26 @@ const ChatGPTInterface = () => {
         .then((data) => console.log(data))  // Log the response data
         .catch((error) => console.error('Error:', error));
     } else if (intent == "UPDATE".toLowerCase()) {
+      console.log("In Update Mode!!!!");
+      const filter = parseQuery(input);
+      const QueryDone = await fetch("/api/Update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nameOfDB: dbName,
+          nameOfCollection: colName,
+          atrs: filter, 
+          MongoDbUri: uri,
+          changeAtrs:[{"name":"jenil"},{"age":20}]
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => console.log(data))
+        .catch((error) => console.error("Error:", error));
+      
     } else if (intent == "DELETE".toLowerCase()) {
-      
-      
-
 
     } else if (intent == "DELETE_CONDITIONED_BASED".toLowerCase()) {
       console.log("In Delete Condition based!!!");
@@ -84,17 +100,13 @@ const ChatGPTInterface = () => {
          body: JSON.stringify({
            nameOfDB: dbName,
            nameOfCollection: colName,
-           atrs: filter, // Query conditions
+           atrs: filter, 
            MongoDbUri: uri,
          }),
        })
          .then((response) => response.json())
          .then((data) => console.log(data))
          .catch((error) => console.error("Error:", error));
-
-
-      
-
 
     } else if (intent == "READ_CONDITION_BASED_DATA".toLowerCase()) {
       console.log("IN Read condition data");
@@ -118,7 +130,22 @@ const ChatGPTInterface = () => {
         .then((data) => console.log(data))
         .catch((error) => console.error("Error:", error));
     } else {
-      //insert
+     console.log("In Insert Data Mode!!!");
+     const QueryDone = await fetch("/api/InsertData", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nameOfDB: dbName,
+        nameOfColletion: colName,
+        data: [{"name":"suraj"}, {"name":"kavit"}], // Query conditions
+        MongodbUri: uri,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error("Error:", error));
     }
   };
 

@@ -1,12 +1,10 @@
-const { MongoClient } = require("mongodb");
-const { ObjectId } = require("mongodb");
-
-
-
-async function readConditionData(nameOfDB, nameOfCollection, atrs , MongoDbUri) {
+import { MongoClient, ObjectId } from "mongodb";
+import { NextResponse } from "next/server";
+// readConditionData function
+async function readConditionData(nameOfDB, nameOfCollection, atrs, MongoDbUri) {
   let uri = MongoDbUri;
   const client = new MongoClient(uri);
-  
+
   try {
     // Connect to the database
     await client.connect();
@@ -73,10 +71,10 @@ async function readConditionData(nameOfDB, nameOfCollection, atrs , MongoDbUri) 
   }
 }
 
-async function updateData(nameOfDB, nameOfCollection, atrs, changeAtrs) {
-  const client = new MongoClient(uri);
+// updateData function
+async function updateData(nameOfDB, nameOfCollection, atrs, changeAtrs, MongoDbUri) {
+  const client = new MongoClient(MongoDbUri);
 
-    
   try {
     // Connect to MongoDB
     await client.connect();
@@ -84,47 +82,57 @@ async function updateData(nameOfDB, nameOfCollection, atrs, changeAtrs) {
     const collection = database.collection(nameOfCollection);
 
     // Get data to update based on conditions
-    const dataToUpdate = await readConditionData(nameOfDB, nameOfCollection, atrs);
+    const dataToUpdate = await readConditionData(nameOfDB, nameOfCollection, atrs, MongoDbUri);
     const response = [];
 
-    
-    // Iterate over the database and check if the _id matches
+    // Iterate over the data to update
     for (const data of dataToUpdate) {
-        
-        // Assuming the data contains _id as an ObjectId
-        const filter = { _id:(new ObjectId(data._id)) }; // Convert string _id to ObjectId
-        
+      const filter = { _id: new ObjectId(data._id) }; // Convert string _id to ObjectId
 
       // Update the specific field in the database
-      const update = { $set: { [changeAtrs['field']]: changeAtrs['value'] } };
+      const update = { $set: { [changeAtrs.field]: changeAtrs.value } };
 
       // Perform the update operation
       const result = await collection.updateOne(filter, update);
       response.push(result);
     }
 
-    // Return the update results
+    // Return the number of affected documents
     return `${response.length} data affected!`;
   } catch (error) {
     console.error("Error updating data:", error);
-    return [];
+    return { success: false, message: "Error updating data" };
   } finally {
-    // Ensure the client is closed
     await client.close();
   }
 }
 
-// Usage Example
-(async () => {
-  const atrs = [
-    { field: "age", operator: "<", value: 100 },
-  ];
+// API route handler for the POST request
+export async function POST(req) {
+  try {
+    // Parse request body
+    const { nameOfDB, nameOfCollection, atrs, changeAtrs, MongoDbUri } = await req.json();
 
-  const changeAtrs = {
-    field: "name",
-    value: "hogaya",
-  };
+    // Validate the required fields
+    if (!nameOfDB || !nameOfCollection || !atrs || !changeAtrs || !MongoDbUri) {
+      return new Response(
+        JSON.stringify({ success: false, message: "Missing required fields" }),
+        { status: 400 }
+      );
+    }
 
-  const results = await updateData("jenil", "pamrar", atrs, changeAtrs);
-  console.log(results); // Logs the results of the update operations
-})();
+    // Call the updateData function
+    const result = await updateData(nameOfDB, nameOfCollection, atrs, changeAtrs, MongoDbUri);
+
+    // Return success response
+    return new Response(
+      JSON.stringify({ success: true, message: result }),
+      { status: 200 }
+    );
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ success: false, message: error.message }),
+      { status: 500 }
+    );
+  }
+}
