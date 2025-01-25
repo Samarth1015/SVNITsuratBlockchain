@@ -28,14 +28,27 @@ const ChatGPTInterface = () => {
     const colName = response["DB_info"].split(/[\s,]+/)[1];
     let intent = ("" + response.intent).toLowerCase();
     if (intent === "read") {
+      console.log("In Read All Data Mode!!");
+
+      const QueryDone = await fetch('/api/ReadAllData', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nameOfDB: dbName,
+          nameOfCollection: colName,
+          MongoDbUri: uri,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => console.log(data))  // Log the response data
+        .catch((error) => console.error('Error:', error));
+
+      
     } else if (intent == "CREATE".toLowerCase()) {
       console.log("In Create Mode!");
-      // console.log({
-      //   nameOfDB: dbName,
-      //   nameOfCollection: colName,
-      //   dataInArray: [{ parmar: "jenil" }], // Data to insert
-      //   MongoDbUri: uri,
-      // });
+ 
 
       const QueryDone = await fetch('/api/createdb', {
         method: 'POST',
