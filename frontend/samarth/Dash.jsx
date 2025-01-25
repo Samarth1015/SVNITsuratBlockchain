@@ -10,7 +10,7 @@ const ChatGPTInterface = () => {
   const [loading, setLoading] = useState(false);
   //function to handle send
   const handleSend = async () => {
-    const uri = "mongodb://localhost:27017/"
+    const uri = "mongodb://localhost:27017/";
     const data = {
       paragraph: input,
     };
@@ -24,35 +24,50 @@ const ChatGPTInterface = () => {
     });
     setLoading(false);
     const response = await res.json();
-    const dbName = (""+response["DB_info"]).split(/[\s,]+/)[0]
-    const colName = response["DB_info"].split(/[\s,]+/)[1]
+    const dbName = ("" + response["DB_info"]).split(/[\s,]+/)[0];
+    const colName = response["DB_info"].split(/[\s,]+/)[1];
     let intent = ("" + response.intent).toLowerCase();
     if (intent === "read") {
     } else if (intent == "CREATE".toLowerCase()) {
-    } else if (intent == "UPDATE".toLowerCase()) {
-    } else if (intent == "DELETE".toLowerCase()) {
-    } else if (intent == "DELETE_CONDITIONED_BASED".toLowerCase()) {
-    } else if (intent == "READ_CONDITION_BASED_DATA".toLowerCase()) {
-      console.log("IN Read condition data");
-      
-      // give me the data whose name hogaya and age is <=19 from database name jenil and collection name pamrar
-      const filter = parseQuery(input);
-      
+      console.log("In Create Mode!");
       // console.log({
-      //   nameOfDB:dbName,
+      //   nameOfDB: dbName,
       //   nameOfCollection: colName,
-      //   atrs: filter, // Query conditions
+      //   dataInArray: [{ parmar: "jenil" }], // Data to insert
       //   MongoDbUri: uri,
       // });
-  
-      
-      const QueryDone = await fetch('/api/ReadConditionBased', {
+
+      const QueryDone = await fetch('/api/createdb', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          nameOfDB:dbName,
+          nameOfDB: dbName,
+          nameOfCollection: colName,
+          dataInArray: [{"parmar": "jenil"}],  // Example data to insert
+          MongoDbUri: uri,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => console.log(data))  // Log the response data
+        .catch((error) => console.error('Error:', error));
+    } else if (intent == "UPDATE".toLowerCase()) {
+    } else if (intent == "DELETE".toLowerCase()) {
+    } else if (intent == "DELETE_CONDITIONED_BASED".toLowerCase()) {
+    } else if (intent == "READ_CONDITION_BASED_DATA".toLowerCase()) {
+      console.log("IN Read condition data");
+
+      // give me the data whose name hogaya and age is <=19 from database name jenil and collection name pamrar
+      const filter = parseQuery(input);
+
+      const QueryDone = await fetch("/api/ReadConditionBased", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nameOfDB: dbName,
           nameOfCollection: colName,
           atrs: filter, // Query conditions
           MongoDbUri: uri,
@@ -60,11 +75,9 @@ const ChatGPTInterface = () => {
       })
         .then((response) => response.json())
         .then((data) => console.log(data))
-        .catch((error) => console.error('Error:', error));
-      
-
-    }
-    else {                                 //insert
+        .catch((error) => console.error("Error:", error));
+    } else {
+      //insert
     }
   };
 

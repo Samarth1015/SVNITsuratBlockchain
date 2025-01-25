@@ -1,6 +1,30 @@
-const { MongoClient } = require("mongodb");
+// In /app/api/createdb/route.js
+import { NextResponse } from 'next/server';
+import { MongoClient } from 'mongodb';
+async function handler(req) {
+  if (req.method === 'POST') {
+    try {
+      const { nameOfDB, nameOfCollection, dataInArray, MongoDbUri } = await req.json();
+      
+      // Validate the inputs
+      if (!nameOfDB || !nameOfCollection || !dataInArray || !MongoDbUri) {
+        return NextResponse.json(
+          { success: false, message: 'Missing required fields' },
+          { status: 400 }
+        );
+      }
 
+      // Call the function to insert data
+      const result = await createDb(nameOfDB, nameOfCollection, dataInArray, MongoDbUri);
 
+      return NextResponse.json({ success: true, message: 'Data inserted successfully' });
+    } catch (error) {
+      return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    }
+  } else {
+    return NextResponse.json({ success: false, message: `Method ${req.method} Not Allowed` }, { status: 405 });
+  }
+}
 
 async function createDb(nameOfDB, nameOfCollection, dataInArray , MongodbUri) {
   let uri = MongodbUri
@@ -27,12 +51,4 @@ async function createDb(nameOfDB, nameOfCollection, dataInArray , MongodbUri) {
   }
 }
 
-// Usage example
-// (async () => {
-//   const res = await createDb("jenil", "pamrar", [
-//     { name: "Hi", age: 14 },
-//     { name: "Hello", age: 18 },
-//     { name: "Hey", age: 20 },
-//   ]);
-//   console.log(res);
-// })();
+export { handler as POST };
