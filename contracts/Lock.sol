@@ -13,7 +13,6 @@ contract Lock {
     }
     struct connection {
         string url;
-        string name;
     }
     struct addressUser {
         address add;
@@ -90,18 +89,15 @@ contract Lock {
         uint256 userLength = access[msg.sender].length;
         uint256 validCount = 0;
 
-        // Count the number of valid accesses
         for (uint256 i = 0; i < userLength; i++) {
             if (ownership[msg.sender][access[msg.sender][i].add]) {
                 validCount++;
             }
         }
 
-        // Create an array of double the size (for address and name)
         string[] memory user = new string[](validCount * 2);
         uint256 index = 0;
 
-        // Populate the user array with valid address-name pairs
         for (uint256 i = 0; i < userLength; i++) {
             if (ownership[msg.sender][access[msg.sender][i].add]) {
                 user[index] = addressToString(access[msg.sender][i].add);
