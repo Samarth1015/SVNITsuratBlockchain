@@ -67,7 +67,35 @@ const ChatGPTInterface = () => {
         .catch((error) => console.error('Error:', error));
     } else if (intent == "UPDATE".toLowerCase()) {
     } else if (intent == "DELETE".toLowerCase()) {
+      
+      
+
+
     } else if (intent == "DELETE_CONDITIONED_BASED".toLowerCase()) {
+      console.log("In Delete Condition based!!!");
+       // give me the data whose name hogaya and age is <=19 from database name jenil and collection name pamrar
+       const filter = parseQuery(input);
+
+       const QueryDone = await fetch("/api/DeleteConditionBased", {
+         method: "POST",
+         headers: {
+           "Content-Type": "application/json",
+         },
+         body: JSON.stringify({
+           nameOfDB: dbName,
+           nameOfCollection: colName,
+           atrs: filter, // Query conditions
+           MongoDbUri: uri,
+         }),
+       })
+         .then((response) => response.json())
+         .then((data) => console.log(data))
+         .catch((error) => console.error("Error:", error));
+
+
+      
+
+
     } else if (intent == "READ_CONDITION_BASED_DATA".toLowerCase()) {
       console.log("IN Read condition data");
 
