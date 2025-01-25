@@ -1,24 +1,82 @@
 "use client";
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
+import { parseQuery } from "./ExtraFuncation_Jenil/Read_Condition_based";
 import Sideelement from "./component/Sideelement";
 
 const ChatGPTInterface = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(true);
-
+  const [loading, setLoading] = useState(false);
   //function to handle send
-  const handleSend = () => {
-    // after response there will be  a fucntion that return the query and statement which will be added in blockchain
+  const handleSend = async () => {
+    const uri = "mongodb://localhost:27017/"
+    const data = {
+      paragraph: input,
+    };
+    setLoading(true);
+    const res = await fetch("http://192.168.1.14:5000/getIntent", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    setLoading(false);
+    const response = await res.json();
+    const dbName = (""+response["DB_info"]).split(/[\s,]+/)[0]
+    const colName = response["DB_info"].split(/[\s,]+/)[1]
+    let intent = ("" + response.intent).toLowerCase();
+    if (intent === "read") {
+    } else if (intent == "CREATE".toLowerCase()) {
+    } else if (intent == "UPDATE".toLowerCase()) {
+    } else if (intent == "DELETE".toLowerCase()) {
+    } else if (intent == "DELETE_CONDITIONED_BASED".toLowerCase()) {
+    } else if (intent == "READ_CONDITION_BASED_DATA".toLowerCase()) {
+      console.log("IN Read condition data");
+      
+      // give me the data whose name hogaya and age is <=19 from database name jenil and collection name pamrar
+      const filter = parseQuery(input);
+      
+      // console.log({
+      //   nameOfDB:dbName,
+      //   nameOfCollection: colName,
+      //   atrs: filter, // Query conditions
+      //   MongoDbUri: uri,
+      // });
+  
+      
+      const QueryDone = await fetch('/api/ReadConditionBased', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nameOfDB:dbName,
+          nameOfCollection: colName,
+          atrs: filter, // Query conditions
+          MongoDbUri: uri,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => console.log(data))
+        .catch((error) => console.error('Error:', error));
+      
+
+    }
+    else {                                 //insert
+    }
   };
+
+  useEffect(() => {
+    console.log(loading ? "loading" : "done");
+  }, [loading]);
 
   return (
     <div
       className={`flex flex-col h-screen ${
         isDarkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
-      }`}
-    >
+      }`}>
       <div>
         <Sideelement></Sideelement>
       </div>
@@ -29,8 +87,7 @@ const ChatGPTInterface = () => {
             key={index}
             className={`flex ${
               msg.sender === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
+            }`}>
             <div
               className={`max-w-xs p-3 rounded-lg text-sm ${
                 msg.sender === "user"
@@ -40,8 +97,7 @@ const ChatGPTInterface = () => {
                   : isDarkMode
                   ? "bg-gray-700 text-gray-200"
                   : "bg-gray-200 text-gray-800"
-              }`}
-            >
+              }`}>
               {msg.text}
             </div>
           </div>
@@ -54,8 +110,7 @@ const ChatGPTInterface = () => {
           isDarkMode
             ? "border-gray-700 bg-gray-800"
             : "border-gray-300 bg-white"
-        }`}
-      >
+        }`}>
         <div className="flex items-center space-x-3">
           <input
             type="text"
@@ -75,8 +130,7 @@ const ChatGPTInterface = () => {
                 ? "bg-blue-500 text-white hover:bg-blue-600"
                 : "bg-blue-500 text-white hover:bg-blue-600"
             }`}
-            onClick={handleSend}
-          >
+            onClick={handleSend}>
             Send
           </button>
         </div>
