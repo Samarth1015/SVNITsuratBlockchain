@@ -21,7 +21,7 @@ export async function POST(req) {
     console.log(data);
 
     // Respond with the data object
-    return NextResponse.json({ success: true, data }, { status: 200 });
+    return NextResponse.json({ success: true,data: data }, { status: 200 });
   } catch (error) {
     // Handle any errors that occur during the database call
     console.error(error);

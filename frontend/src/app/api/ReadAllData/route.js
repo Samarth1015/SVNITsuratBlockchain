@@ -46,7 +46,7 @@ export async function POST(req) {
 
     // Respond with the data
     return new NextResponse(
-      JSON.stringify({ success: true, data }),
+      JSON.stringify({ success: true, data:data }),
       { status: 200 }
     );
   } catch (error) {

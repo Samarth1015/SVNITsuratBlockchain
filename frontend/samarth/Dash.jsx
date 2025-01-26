@@ -4,12 +4,20 @@ import { parseQuery } from "./ExtraFuncation_Jenil/Read_Condition_based";
 import Sideelement from "./component/Sideelement";
 
 const ChatGPTInterface = () => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(()=>[]);
   const [input, setInput] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [readDataOperation , setReadDataOperation] = useState({response :[] , flag:false})
+  const [hydrated, setHydrated] = useState(false);
+
+useEffect(() => {
+  setHydrated(true);
+}, []);
+
   //function to handle send
   const handleSend = async () => {
+    // setMessages(input)
     const uri = "mongodb://localhost:27017/";
     const data = {
       paragraph: input,
@@ -29,7 +37,7 @@ const ChatGPTInterface = () => {
     let intent = ("" + response.intent).toLowerCase();
     if (intent === "read") {
       console.log("In Read All Data Mode!!");
-
+      setReadDataOperation(true);
       const QueryDone = await fetch('/api/ReadAllData', {
         method: 'POST',
         headers: {
@@ -41,10 +49,16 @@ const ChatGPTInterface = () => {
           MongoDbUri: uri,
         }),
       })
-        .then((response) => response.json())
-        .then((data) => console.log(data))  // Log the response data
-        .catch((error) => console.error('Error:', error));
+        // .then((response) => response.json())
+        // .then((data) => console.log(data))  // Log the response data
+        // .catch((error) => console.error('Error:', error));
 
+        const data =await QueryDone.json();
+        setReadDataOperation({
+          response: data.data, // Assuming the response contains a "data" key
+          flag: true,
+        });
+    
       
     } else if (intent == "CREATE".toLowerCase()) {
       console.log("In Create Mode!");
@@ -124,28 +138,43 @@ const ChatGPTInterface = () => {
          .then((data) => console.log(data))
          .catch((error) => console.error("Error:", error));
 
-    } else if (intent == "READ_CONDITION_BASED_DATA".toLowerCase()) {
-      console.log("IN Read condition data");
-
-      // give me the data whose name hogaya and age is <=19 from database name jenil and collection name pamrar
-      const filter = parseQuery(input);
-
-      const QueryDone = await fetch("/api/ReadConditionBased", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          nameOfDB: dbName,
-          nameOfCollection: colName,
-          atrs: filter, // Query conditions
-          MongoDbUri: uri,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => console.log(data))
-        .catch((error) => console.error("Error:", error));
-    } else {
+        } else if (intent == "READ_CONDITION_BASED_DATA".toLowerCase()) {
+          console.log("IN Read condition data");
+        
+          // Extract filter conditions from the input
+          const filter = parseQuery(input);
+        
+          try {
+            const res = await fetch("/api/ReadConditionBased", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                nameOfDB: dbName,
+                nameOfCollection: colName,
+                atrs: filter, // Query conditions
+                MongoDbUri: uri,
+              }),
+            });
+        
+            // Await the JSON response
+            const data = await res.json();
+            // console.log(data);
+            // 
+            // Set the response data to state
+            setReadDataOperation({
+              response: data.data, // Assuming the response contains a "data" key
+              flag: true,
+            });
+        
+        
+             // For debugging the API response
+          } catch (error) {
+            console.error("Error:", error);
+          }
+        }
+        else {
      console.log("In Insert Data Mode!!!");
      const QueryDone = await fetch("/api/InsertData", {
       method: "POST",
@@ -168,6 +197,7 @@ const ChatGPTInterface = () => {
   useEffect(() => {
     console.log(loading ? "loading" : "done");
   }, [loading]);
+if (!hydrated) return null;
 
   return (
     <div
@@ -178,28 +208,21 @@ const ChatGPTInterface = () => {
         <Sideelement></Sideelement>
       </div>
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`flex ${
-              msg.sender === "user" ? "justify-end" : "justify-start"
-            }`}>
-            <div
-              className={`max-w-xs p-3 rounded-lg text-sm ${
-                msg.sender === "user"
-                  ? isDarkMode
-                    ? "bg-blue-500 text-white"
-                    : "bg-blue-500 text-white"
-                  : isDarkMode
-                  ? "bg-gray-700 text-gray-200"
-                  : "bg-gray-200 text-gray-800"
-              }`}>
-              {msg.text}
-            </div>
-          </div>
-        ))}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-black">
+       
+  {!loading && readDataOperation.flag &&
+    readDataOperation.response.map((obj, index) => (
+      <div
+        key={index}
+        className="p-4 border rounded-lg bg-gray-800 text-white"
+      >
+        <pre>{JSON.stringify(obj, null, 2)}</pre>
       </div>
+    ))}
+    {loading && <>
+    <p className="animate-pulse duration-150">Fetching Data...</p>
+    </>}
+</div>
 
       {/* Input Field */}
       <div
@@ -227,7 +250,14 @@ const ChatGPTInterface = () => {
                 ? "bg-blue-500 text-white hover:bg-blue-600"
                 : "bg-blue-500 text-white hover:bg-blue-600"
             }`}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault(); // Prevent unexpected default actions
+                handleSend();
+              }
+            }}
             onClick={handleSend}>
+
             Send
           </button>
         </div>
