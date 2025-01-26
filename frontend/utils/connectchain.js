@@ -19,4 +19,4 @@ async function connectWallet() {
   }
 }
 
-export { provider, connectWallet };
+export { provider, connectWallet, contractAddress };

@@ -2,6 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { parseQuery } from "./ExtraFuncation_Jenil/Read_Condition_based";
 import Sideelement from "./component/Sideelement";
+import { Contract, ethers } from "ethers";
+import { contractAddress, provider } from "../utils/connectchain";
+import ABI from "../../artifacts/contracts/Lock.sol/Lock.json";
 
 const ChatGPTInterface = () => {
   const [messages, setMessages] = useState([]);
@@ -10,143 +13,149 @@ const ChatGPTInterface = () => {
   const [loading, setLoading] = useState(false);
   //function to handle send
   const handleSend = async () => {
-    const uri = "mongodb://localhost:27017/";
-    const data = {
-      paragraph: input,
-    };
-    setLoading(true);
-    const res = await fetch("http://192.168.1.14:5000/getIntent", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    setLoading(false);
-    const response = await res.json();
-    const dbName = ("" + response["DB_info"]).split(/[\s,]+/)[0];
-    const colName = response["DB_info"].split(/[\s,]+/)[1];
-    let intent = ("" + response.intent).toLowerCase();
-    if (intent === "read") {
-      console.log("In Read All Data Mode!!");
-
-      const QueryDone = await fetch('/api/ReadAllData', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nameOfDB: dbName,
-          nameOfCollection: colName,
-          MongoDbUri: uri,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => console.log(data))  // Log the response data
-        .catch((error) => console.error('Error:', error));
-
-      
-    } else if (intent == "CREATE".toLowerCase()) {
-      console.log("In Create Mode!");
- 
-
-      const QueryDone = await fetch('/api/createdb', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nameOfDB: dbName,
-          nameOfCollection: colName,
-          dataInArray: [{"parmar": "jenil"}],  // Example data to insert
-          MongoDbUri: uri,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => console.log(data))  // Log the response data
-        .catch((error) => console.error('Error:', error));
-    } else if (intent == "UPDATE".toLowerCase()) {
-      console.log("In Update Mode!!!!");
-      const filter = parseQuery(input);
-      const QueryDone = await fetch("/api/Update", {
+    try {
+      const uri = "mongodb://localhost:27017/";
+      const data = {
+        paragraph: input,
+      };
+      setLoading(true);
+      const res = await fetch("http://192.168.1.14:5000/getIntent", {
         method: "POST",
+        body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          nameOfDB: dbName,
-          nameOfCollection: colName,
-          atrs: filter, 
-          MongoDbUri: uri,
-          changeAtrs:[{"name":"jenil"},{"age":20}]
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => console.log(data))
-        .catch((error) => console.error("Error:", error));
-      
-    } else if (intent == "DELETE".toLowerCase()) {
+      });
+      setLoading(false);
+      const response = await res.json();
+      const dbName = ("" + response["DB_info"]).split(/[\s,]+/)[0];
+      const colName = response["DB_info"].split(/[\s,]+/)[1];
+      let intent = ("" + response.intent).toLowerCase();
+      if (intent === "read") {
+        console.log("In Read All Data Mode!!");
 
-    } else if (intent == "DELETE_CONDITIONED_BASED".toLowerCase()) {
-      console.log("In Delete Condition based!!!");
-       // give me the data whose name hogaya and age is <=19 from database name jenil and collection name pamrar
-       const filter = parseQuery(input);
+        const QueryDone = await fetch("/api/ReadAllData", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nameOfDB: dbName,
+            nameOfCollection: colName,
+            MongoDbUri: uri,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => console.log(data)) // Log the response data
+          .catch((error) => console.error("Error:", error));
+      } else if (intent == "CREATE".toLowerCase()) {
+        console.log("In Create Mode!");
 
-       const QueryDone = await fetch("/api/DeleteConditionBased", {
-         method: "POST",
-         headers: {
-           "Content-Type": "application/json",
-         },
-         body: JSON.stringify({
-           nameOfDB: dbName,
-           nameOfCollection: colName,
-           atrs: filter, 
-           MongoDbUri: uri,
-         }),
-       })
-         .then((response) => response.json())
-         .then((data) => console.log(data))
-         .catch((error) => console.error("Error:", error));
+        const QueryDone = await fetch("/api/createdb", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nameOfDB: dbName,
+            nameOfCollection: colName,
+            dataInArray: [{ parmar: "jenil" }], // Example data to insert
+            MongoDbUri: uri,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => console.log(data)) // Log the response data
+          .catch((error) => console.error("Error:", error));
+      } else if (intent == "UPDATE".toLowerCase()) {
+        console.log("In Update Mode!!!!");
+        const filter = parseQuery(input);
+        const QueryDone = await fetch("/api/Update", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nameOfDB: dbName,
+            nameOfCollection: colName,
+            atrs: filter,
+            MongoDbUri: uri,
+            changeAtrs: [{ name: "jenil" }, { age: 20 }],
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => console.log(data))
+          .catch((error) => console.error("Error:", error));
+      } else if (intent == "DELETE".toLowerCase()) {
+      } else if (intent == "DELETE_CONDITIONED_BASED".toLowerCase()) {
+        console.log("In Delete Condition based!!!");
+        // give me the data whose name hogaya and age is <=19 from database name jenil and collection name pamrar
+        const filter = parseQuery(input);
 
-    } else if (intent == "READ_CONDITION_BASED_DATA".toLowerCase()) {
-      console.log("IN Read condition data");
+        const QueryDone = await fetch("/api/DeleteConditionBased", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nameOfDB: dbName,
+            nameOfCollection: colName,
+            atrs: filter,
+            MongoDbUri: uri,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => console.log(data))
+          .catch((error) => console.error("Error:", error));
+      } else if (intent == "READ_CONDITION_BASED_DATA".toLowerCase()) {
+        console.log("IN Read condition data");
 
-      // give me the data whose name hogaya and age is <=19 from database name jenil and collection name pamrar
-      const filter = parseQuery(input);
+        // give me the data whose name hogaya and age is <=19 from database name jenil and collection name pamrar
+        const filter = parseQuery(input);
 
-      const QueryDone = await fetch("/api/ReadConditionBased", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          nameOfDB: dbName,
-          nameOfCollection: colName,
-          atrs: filter, // Query conditions
-          MongoDbUri: uri,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => console.log(data))
-        .catch((error) => console.error("Error:", error));
-    } else {
-     console.log("In Insert Data Mode!!!");
-     const QueryDone = await fetch("/api/InsertData", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nameOfDB: dbName,
-        nameOfColletion: colName,
-        data: [{"name":"suraj"}, {"name":"kavit"}], // Query conditions
-        MongodbUri: uri,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.error("Error:", error));
+        const QueryDone = await fetch("/api/ReadConditionBased", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nameOfDB: dbName,
+            nameOfCollection: colName,
+            atrs: filter, // Query conditions
+            MongoDbUri: uri,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => console.log(data))
+          .catch((error) => console.error("Error:", error));
+      } else {
+        console.log("In Insert Data Mode!!!");
+        const QueryDone = await fetch("/api/InsertData", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nameOfDB: dbName,
+            nameOfColletion: colName,
+            data: [{ name: "suraj" }, { name: "kavit" }], // Query conditions
+            MongodbUri: uri,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => console.log(data))
+          .catch((error) => console.error("Error:", error));
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+      setLoading(false);
     }
+
+    let signature = await provider.getSigner();
+    console.log(signature);
+    console.log("address->", await signature.getAddress());
+    let contract = new Contract(contractAddress, ABI.abi, signature);
+    console.log(contract);
+    await contract.uploadByOur(input, "this is my first data");
   };
 
   useEffect(() => {
@@ -157,7 +166,8 @@ const ChatGPTInterface = () => {
     <div
       className={`flex flex-col h-screen ${
         isDarkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
-      }`}>
+      }`}
+    >
       <div>
         <Sideelement></Sideelement>
       </div>
@@ -168,7 +178,8 @@ const ChatGPTInterface = () => {
             key={index}
             className={`flex ${
               msg.sender === "user" ? "justify-end" : "justify-start"
-            }`}>
+            }`}
+          >
             <div
               className={`max-w-xs p-3 rounded-lg text-sm ${
                 msg.sender === "user"
@@ -178,7 +189,8 @@ const ChatGPTInterface = () => {
                   : isDarkMode
                   ? "bg-gray-700 text-gray-200"
                   : "bg-gray-200 text-gray-800"
-              }`}>
+              }`}
+            >
               {msg.text}
             </div>
           </div>
@@ -191,7 +203,8 @@ const ChatGPTInterface = () => {
           isDarkMode
             ? "border-gray-700 bg-gray-800"
             : "border-gray-300 bg-white"
-        }`}>
+        }`}
+      >
         <div className="flex items-center space-x-3">
           <input
             type="text"
@@ -211,7 +224,8 @@ const ChatGPTInterface = () => {
                 ? "bg-blue-500 text-white hover:bg-blue-600"
                 : "bg-blue-500 text-white hover:bg-blue-600"
             }`}
-            onClick={handleSend}>
+            onClick={handleSend}
+          >
             Send
           </button>
         </div>
