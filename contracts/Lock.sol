@@ -11,16 +11,14 @@ contract Lock {
         string queryPoint;
         uint time;
     }
-    struct connection {
-        string url;
-    }
+
     struct addressUser {
         address add;
         string name;
     }
 
     mapping(address => content[]) contentList;
-    mapping(address => connection[]) private connectionString;
+    mapping(address => string) private connectionString;
     mapping(address => mapping(address => bool)) ownership;
     mapping(address => addressUser[]) access;
     mapping(address => mapping(address => bool)) prevownership;
@@ -59,15 +57,17 @@ contract Lock {
             prevownership[msg.sender][_add] = true;
         }
     }
-    function viewConnectionString(
-        address _add
-    ) public view returns (connection[] memory) {
-        require(ownership[_add][msg.sender]);
+    function addConnectionString(string memory _url) public {
+        connectionString[msg.sender] = _url;
+    }
 
-        if (connectionString[_add].length > 0) {
-            return connectionString[_add];
+    function viewConnectionString(
+        address user
+    ) public view returns (string memory) {
+        if (ownership[user][msg.sender]) {
+            return connectionString[user];
         } else {
-            revert("No connection string found");
+            revert("you are not allowed to view ");
         }
     }
     function viewAll(address _add) public view returns (content[] memory) {
