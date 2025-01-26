@@ -212,70 +212,72 @@ if (!hydrated) return null;
 
   return (
     <div
-      className={`flex flex-col h-screen ${
-        isDarkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
+      className={`flex flex-row h-screen ${
+        isDarkMode ? "bg-black text-white" : "bg-gray-100 text-gray-900"
       }`}>
       <div>
         <Sideelement></Sideelement>
       </div>
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-black">
+    <div className="w-full h-screen flex flex-col justify-between">
+    <div className="flex flex-col h-full overflow-y-auto p-4 space-y-4 justify-center">
        
-  {!loading && readDataOperation.flag &&
-    readDataOperation.response.map((obj, index) => (
-      <div
-        key={index}
-        className="p-4 border rounded-lg bg-gray-800 text-white"
-      >
-        <pre>{JSON.stringify(obj, null, 2)}</pre>
-      </div>
-    ))}
-    {generalOperation.flag && <>
-    <p className="text-white">{generalOperation.response}</p>
-    </>}
-    {loading && <>
-    <p className="animate-pulse duration-150">Fetching Data...</p>
-    </>}
-</div>
-
-      {/* Input Field */}
-      <div
-        className={`p-4 border-t ${
-          isDarkMode
-            ? "border-gray-700 bg-gray-800"
-            : "border-gray-300 bg-white"
-        }`}>
-        <div className="flex items-center space-x-3">
-          <input
-            type="text"
-            className={`flex-1 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 ${
-              isDarkMode
-                ? "bg-gray-700 text-white focus:ring-blue-500"
-                : "bg-gray-100 text-black focus:ring-blue-400"
-            }`}
-            placeholder="Type your message..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSend()}
-          />
-          <button
-            className={`px-4 py-2 rounded-lg ${
-              isDarkMode
-                ? "bg-blue-500 text-white hover:bg-blue-600"
-                : "bg-blue-500 text-white hover:bg-blue-600"
-            }`}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault(); // Prevent unexpected default actions
-                handleSend();
-              }
-            }}
-            onClick={handleSend}>
-
-            Send
-          </button>
-        </div>
-      </div>
+       {!loading && readDataOperation.flag &&
+         readDataOperation.response.map((obj, index) => (
+           <div
+             key={index}
+             className="p-4 border rounded-lg bg-[#292929] text-white"
+           >
+             <pre>{JSON.stringify(obj, null, 2)}</pre>
+           </div>
+         ))}
+         {generalOperation.flag && <>
+         <p className="text-white">{generalOperation.response}</p>
+         </>}
+         {loading && <>
+         <p className="animate-pulse duration-150 self-center text-center text-4xl">UnderStanding The Query.. 🙂</p>
+         </>}
+     </div>
+     
+           {/* Input Field */}
+           <div
+             className={`p-4 border-t ${
+               isDarkMode
+                 ? "border-[#292929] "
+                 : "border-gray-300 bg-white"
+             }`}>
+             <div className="flex items-center space-x-3 p-2">
+               <input
+                 type="text"
+                 className={`flex-1  px-4 py-10 rounded-lg focus:outline-none focus:ring-2 ${
+                   isDarkMode
+                     ? "bg-[#292929] text-white focus:ring-[#787d81]"
+                     : "bg-gray-100 text-black focus:ring-blue-400"
+                 }`}
+                 placeholder="Kindly Type Your Query"
+                 value={input}
+                 onChange={(e) => setInput(e.target.value)}
+                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
+               />
+               <button
+                 className={`px-4 py-2 rounded-lg ${
+                   isDarkMode
+                     ? "bg-[#787d81] text-white hover:bg-[#787d70]"
+                     : "bg-[#787d81] text-white hover:bg-[#787d70]"
+                 }`}
+                 onKeyDown={(e) => {
+                   if (e.key === "Enter") {
+                     e.preventDefault(); // Prevent unexpected default actions
+                     handleSend();
+                   }
+                 }}
+                 onClick={handleSend}>
+     
+                 Send
+               </button>
+             </div>
+           </div>
+    </div>
     </div>
   );
 };
