@@ -10,7 +10,7 @@ const ChatGPTInterface = () => {
   const [loading, setLoading] = useState(false);
   const [readDataOperation , setReadDataOperation] = useState({response :[] , flag:false})
   const [hydrated, setHydrated] = useState(false);
-
+  const [generalOperation , setGeneralOpeeration] = useState({ response: "", flag: false })
 useEffect(() => {
   setHydrated(true);
 }, []);
@@ -76,9 +76,15 @@ useEffect(() => {
           MongoDbUri: uri,
         }),
       })
-        .then((response) => response.json())
-        .then((data) => console.log(data))  // Log the response data
-        .catch((error) => console.error('Error:', error));
+      const data = await QueryDone.json();
+      setGeneralOpeeration({
+        flag:true,
+        response:"Done Creation Operation!!"
+      })
+      
+        // .then((response) => response.json())
+        // .then((data) => console.log(data))  // Log the response data
+        // .catch((error) => console.error('Error:', error));
     } else if (intent == "UPDATE".toLowerCase()) {
       console.log("In Update Mode!!!!");
       const filter = parseQuery(input);
@@ -95,9 +101,11 @@ useEffect(() => {
           changeAtrs:[{"name":"jenil"},{"age":20}]
         }),
       })
-        .then((response) => response.json())
-        .then((data) => console.log(data))
-        .catch((error) => console.error("Error:", error));
+        const data = await QueryDone.json();
+        setGeneralOpeeration({
+          flag:true,
+          response:data['message']
+        })
       
     } else if (intent == "DELETE".toLowerCase()) {
       console.log("In Whole Collection Delete Mode!");
@@ -114,9 +122,11 @@ useEffect(() => {
           MongoDbUri: uri,
         }),
       })
-        .then((response) => response.json())
-        .then((data) => console.log(data))  // Log the response data
-        .catch((error) => console.error('Error:', error));
+       const data =await QueryDone.json()
+       setGeneralOpeeration({
+        flag:true,
+        response:data['message']
+       })
     } else if (intent == "DELETE_CONDITIONED_BASED".toLowerCase()) {
       console.log("In Delete Condition based!!!");
        // give me the data whose name hogaya and age is <=19 from database name jenil and collection name pamrar
@@ -134,9 +144,11 @@ useEffect(() => {
            MongoDbUri: uri,
          }),
        })
-         .then((response) => response.json())
-         .then((data) => console.log(data))
-         .catch((error) => console.error("Error:", error));
+       const data = await QueryDone.json();
+       setGeneralOpeeration({
+        response:`${data['deletedCount']} entries deleted!!`,
+        flag:true
+       })
 
         } else if (intent == "READ_CONDITION_BASED_DATA".toLowerCase()) {
           console.log("IN Read condition data");
@@ -188,9 +200,8 @@ useEffect(() => {
         MongodbUri: uri,
       }),
     })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.error("Error:", error));
+      const data = await QueryDone.json();
+      setGeneralOpeeration({response:`${data['insertedCount']} entries Inseted In DB!!` , flag:true})
     }
   };
 
@@ -219,6 +230,9 @@ if (!hydrated) return null;
         <pre>{JSON.stringify(obj, null, 2)}</pre>
       </div>
     ))}
+    {generalOperation.flag && <>
+    <p className="text-white">{generalOperation.response}</p>
+    </>}
     {loading && <>
     <p className="animate-pulse duration-150">Fetching Data...</p>
     </>}
