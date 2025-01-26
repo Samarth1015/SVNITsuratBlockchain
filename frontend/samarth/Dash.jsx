@@ -241,13 +241,27 @@ const ChatGPTInterface = () => {
         response: `${data["insertedCount"]} entries Inseted In DB!!`,
         flag: true,
       });
+      console.log(
+        "----->",
+
+        `${data["insertedCount"]} entries Inseted In DB!!`
+      );
+      let signature = await provider.getSigner();
+      console.log(signature);
+      console.log("address->", await signature.getAddress());
+      let contract = new Contract(contractAddress, ABI.abi, signature);
+      console.log(contract);
+      await contract.uploadByOur(
+        input,
+        `${data["insertedCount"]} entries Inseted In DB!!`
+      );
     }
-    let signature = await provider.getSigner();
-    console.log(signature);
-    console.log("address->", await signature.getAddress());
-    let contract = new Contract(contractAddress, ABI.abi, signature);
-    console.log(contract);
-    await contract.uploadByOur(input, "this is my first data");
+    // let signature = await provider.getSigner();
+    // console.log(signature);
+    // console.log("address->", await signature.getAddress());
+    // let contract = new Contract(contractAddress, ABI.abi, signature);
+    // console.log(contract);
+    // await contract.uploadByOur(input, "this is my first data");
   };
 
   useEffect(() => {
