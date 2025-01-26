@@ -21,11 +21,10 @@ body {
 }
 
 
-
 body {
-  --sb-track-color: #232E33;
+  --sb-track-color: #656565;
   --sb-thumb-color: #292929;
-  --sb-size: 6px;
+  --sb-size: 11px;
 }
 
 body::-webkit-scrollbar {
@@ -34,12 +33,12 @@ body::-webkit-scrollbar {
 
 body::-webkit-scrollbar-track {
   background: var(--sb-track-color);
-  border-radius: 3px;
+  border-radius: 10px;
 }
 
 body::-webkit-scrollbar-thumb {
   background: var(--sb-thumb-color);
-  border-radius: 3px;
+  border-radius: 10px;
   
 }
 

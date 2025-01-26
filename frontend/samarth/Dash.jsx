@@ -5,12 +5,15 @@ import Sideelement from "./component/Sideelement";
 import { contractAddress, provider } from "../utils/connectchain";
 import { Contract } from "ethers";
 import ABI from "../../artifacts/contracts/Lock.sol/Lock.json";
+const uri = "mongodb://localhost:27017/";
 
 const ChatGPTInterface = () => {
   const [messages, setMessages] = useState(() => []);
+
   const [input, setInput] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [allDatabases, setAllDatabase] = useState([]);
   const [readDataOperation, setReadDataOperation] = useState({
     response: [],
     flag: false,
@@ -22,11 +25,42 @@ const ChatGPTInterface = () => {
   });
 
   useEffect(() => {
+    async function getDbs(uri) {
+      const data = {
+        MongoDbUri: uri,
+      };
+  
+      try {
+        const res = await fetch("/api/CheckDb", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+  
+        if (!res.ok) {
+          throw new Error("Failed to fetch databases");
+        }
+  
+        const responseData = await res.json();
+        console.log("Response Data:", responseData); // Log the response to debug
+        const databases = responseData['databases'];
+        setAllDatabase(databases['databases']);
+  
+      } catch (error) {
+        console.error("Error fetching databases:", error);
+      }
+    }
+  
+    // Replace with your MongoDB URI
+    getDbs(uri);
+  }, []);
+  useEffect(() => {
     setHydrated(true);
   }, []);
 
   const handleSend = async () => {
-    const uri = "mongodb://localhost:27017/";
     const data = { paragraph: input };
     setLoading(true);
 
@@ -165,17 +199,22 @@ const ChatGPTInterface = () => {
     await contract.uploadByOur(input, "this is my first data");
   };
 
-  if (!hydrated) return null;
 
   return (
     <div
-      className={`flex flex-row h-screen ${
-        isDarkMode ? "bg-black text-white" : "bg-gray-100 text-gray-900"
-      }`}
-    >
-      <div>
-        <Sideelement />
-      </div>
+      className={`flex flex-row h-screen  ${
+        isDarkMode ? "bg-black  text-white" : "bg-gray-100 text-gray-900"
+      }`}>
+       <div className="w-fit border-r-2 border-[#292929]  px-4">
+      <h1 className="font-semibold text-[#e6e0e0] text-center my-5">Databases</h1>
+      <ul className="gap-2 flex flex-col">
+      {allDatabases && allDatabases.length > 0 ? (
+          allDatabases.map((db, index) => <li className="w-full px-5 py-2 text-sm bg-[#292929] rounded-2xl text-center  hover:bg-[#626262] hover:scale-105 transition-all duration-100" key={index}>{db['name']}</li>)
+        ) : (
+          <p>No databases found.</p>
+        )}
+      </ul>
+    </div>
       <div className="w-full h-screen flex flex-col justify-between">
         <div className="flex flex-col h-full overflow-y-auto p-4 space-y-4 justify-center">
           {!loading &&
@@ -183,8 +222,7 @@ const ChatGPTInterface = () => {
             readDataOperation.response.map((obj, index) => (
               <div
                 key={index}
-                className="p-4 border rounded-lg bg-[#292929] text-white"
-              >
+                className="p-4 border rounded-lg bg-[#292929] text-white">
                 <pre>{JSON.stringify(obj, null, 2)}</pre>
               </div>
             ))}
@@ -200,8 +238,7 @@ const ChatGPTInterface = () => {
         <div
           className={`p-4 border-t ${
             isDarkMode ? "border-[#292929]" : "border-gray-300 bg-white"
-          }`}
-        >
+          }`}>
           <div className="flex items-center space-x-3 p-2">
             <input
               type="text"
@@ -217,8 +254,7 @@ const ChatGPTInterface = () => {
             />
             <button
               className="px-4 py-2 rounded-lg bg-[#787d81] text-white hover:bg-[#787d70]"
-              onClick={handleSend}
-            >
+              onClick={handleSend}>
               Send
             </button>
           </div>
