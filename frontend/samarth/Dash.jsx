@@ -86,7 +86,23 @@ const ChatGPTInterface = () => {
         .catch((error) => console.error("Error:", error));
       
     } else if (intent == "DELETE".toLowerCase()) {
+      console.log("In Whole Collection Delete Mode!");
+    
 
+      const QueryDone = await fetch('/api/DeleteCollection', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nameOfDB: dbName,
+          nameOfCollection: colName,
+          MongoDbUri: uri,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => console.log(data))  // Log the response data
+        .catch((error) => console.error('Error:', error));
     } else if (intent == "DELETE_CONDITIONED_BASED".toLowerCase()) {
       console.log("In Delete Condition based!!!");
        // give me the data whose name hogaya and age is <=19 from database name jenil and collection name pamrar
