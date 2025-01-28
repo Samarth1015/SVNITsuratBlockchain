@@ -5,6 +5,7 @@ import Sideelement from "./component/Sideelement";
 import { contractAddress, provider } from "../utils/connectchain";
 import { Contract } from "ethers";
 import ABI from "../../artifacts/contracts/Lock.sol/Lock.json";
+import { ExtractDataFromPara } from "@/app/api/InsertData/ExtractDataFromInsert";
 const uri = "mongodb://localhost:27017/";
 
 const ChatGPTInterface = () => {
@@ -244,6 +245,7 @@ const ChatGPTInterface = () => {
       }
     } else {
       console.log("In Insert Data Mode!!!");
+      const dataToInsert = ExtractDataFromPara(input);
       const QueryDone = await fetch("/api/InsertData", {
         method: "POST",
         headers: {
@@ -252,7 +254,7 @@ const ChatGPTInterface = () => {
         body: JSON.stringify({
           nameOfDB: dbName,
           nameOfColletion: colName,
-          data: [{ name: "suraj" }, { name: "kavit" }], // Query conditions
+          data: dataToInsert, // Query conditions
           MongodbUri: uri,
         }),
       });

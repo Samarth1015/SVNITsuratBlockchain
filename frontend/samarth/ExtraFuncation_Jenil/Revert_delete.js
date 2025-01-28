@@ -1,3 +1,4 @@
+import { ExtractDataFromPara } from "@/app/api/InsertData/ExtractDataFromInsert";
 import { MongoClient } from "mongodb";
 
 async function Revert_Delete(nameOfDb  ,nameOfCollection , data , MongodbURI) {       ////When Insertion Happened
@@ -26,16 +27,16 @@ async function Revert_Delete(nameOfDb  ,nameOfCollection , data , MongodbURI) { 
 
 export async function POST(request) {
     try {
-        const { nameOfDb, nameOfCollection, data, MongodbURI } = await request.json();
+        const { nameOfDb, nameOfCollection, paragraph, MongodbURI } = await request.json();
 
         // Validate the input
-        if (!nameOfDb || !nameOfCollection || !data || !MongodbURI) {
+        if (!nameOfDb || !nameOfCollection || !paragraph || !MongodbURI) {
             return new Response(JSON.stringify({ message: 'Missing required fields' }), {
                 status: 400,
                 headers: { 'Content-Type': 'application/json' },
             });
         }
-
+        const data = ExtractDataFromPara(paragraph);
         // Call the Revert_Insert function
         await Revert_Delete(nameOfDb, nameOfCollection, data, MongodbURI);
 
