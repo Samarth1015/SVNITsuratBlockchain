@@ -13,6 +13,11 @@ const View = () => {
       let add = await signature.getAddress();
       let contract = new Contract(contractAddress, ABI.abi, signature);
       let res = await contract.viewUserItsellf();
+      res = [
+        ["samar", "seee", 2221],
+        ["samar", "seee", 2221],
+        ["samar", "seee", 2221],
+      ];
       console.log(res);
       res.map((e) => {
         console.log(e[0]);
