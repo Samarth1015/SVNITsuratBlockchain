@@ -1,4 +1,5 @@
-export default function Card({ statement, query, date }) {
+export default function Card({ statement, query, intent, date }) {
+  console.log(intent);
   return (
     <div className="max-w-sm mx-auto my-4 p-6 bg-gradient-to-br from-white to-gray-50 border border-gray-100 rounded-2xl shadow-2xl hover:shadow-3xl transition-shadow duration-300 transform hover:-translate-y-1">
       <div className="mb-6">
@@ -21,7 +22,7 @@ export default function Card({ statement, query, date }) {
             day: "numeric",
           })}
         </p>
-        {["update", "delete", "insert"].includes(query) ? (
+        {["update", "delete", "insert"].includes(intent) ? (
           <button className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
             Revert
           </button>

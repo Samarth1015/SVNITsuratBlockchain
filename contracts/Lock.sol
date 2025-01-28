@@ -9,6 +9,7 @@ contract Lock {
     struct content {
         string userStatement;
         string queryPoint;
+        string intent;
         uint time;
     }
 
@@ -26,23 +27,25 @@ contract Lock {
     function upload(
         address _user,
         string memory _userStatement,
-        string memory _queryPoint
+        string memory _queryPoint,
+        string memory _intent
     ) public {
         require(
             ownership[_user][msg.sender],
             "You dont have access to upload to his database"
         );
-
+        console.log("userStatement: %s", _intent);
         contentList[_user].push(
-            content(_userStatement, _queryPoint, block.timestamp)
+            content(_userStatement, _queryPoint, _intent, block.timestamp)
         );
     }
     function uploadByOur(
         string memory _userStatement,
-        string memory _queryPoint
+        string memory _queryPoint,
+        string memory _intent
     ) public {
         contentList[msg.sender].push(
-            content(_userStatement, _queryPoint, block.timestamp)
+            content(_userStatement, _queryPoint, _intent, block.timestamp)
         );
     }
 

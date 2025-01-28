@@ -166,6 +166,16 @@ const ChatGPTInterface = () => {
         flag: true,
         response: data["message"],
       });
+      let signature = await provider.getSigner();
+      console.log(signature);
+      console.log("address->", await signature.getAddress());
+      let contract = new Contract(contractAddress, ABI.abi, signature);
+      console.log(contract);
+      await contract.uploadByOur(
+        input,
+        `${data["message"]} entries Inseted In DB!!`,
+        "update"
+      );
     } else if (intent == "DELETE_CONDITIONED_BASED".toLowerCase()) {
       console.log("In Delete Condition based!!!");
       // give me the data whose name hogaya and age is <=19 from database name jenil and collection name pamrar
@@ -188,6 +198,16 @@ const ChatGPTInterface = () => {
         response: `${data["deletedCount"]} entries deleted!!`,
         flag: true,
       });
+      let signature = await provider.getSigner();
+      console.log(signature);
+      console.log("address->", await signature.getAddress());
+      let contract = new Contract(contractAddress, ABI.abi, signature);
+      console.log(contract);
+      await contract.uploadByOur(
+        input,
+        `${data["message"]} entries Inseted In DB!!`,
+        "delete"
+      );
     } else if (intent == "READ_CONDITION_BASED_DATA".toLowerCase()) {
       console.log("IN Read condition data");
 
@@ -253,8 +273,14 @@ const ChatGPTInterface = () => {
       console.log(contract);
       await contract.uploadByOur(
         input,
-        `${data["insertedCount"]} entries Inseted In DB!!`
+        `${data["insertedCount"]} entries Inseted In DB!!`,
+        "insert"
       );
+      // await contract.uploadByOur(
+      //   input,
+      //   `"2 entries Inseted In DB!!"`,
+      //   "insert"
+      // );
     }
     // let signature = await provider.getSigner();
     // console.log(signature);
@@ -275,6 +301,39 @@ const ChatGPTInterface = () => {
         isDarkMode ? "bg-black text-white" : "bg-gray-100 text-gray-900"
       }`}
     >
+      <div>
+        <button
+          onClick={async () => {
+            let signature = await provider.getSigner();
+            console.log(signature);
+            console.log("address->", await signature.getAddress());
+            let contract = new Contract(contractAddress, ABI.abi, signature);
+            console.log(contract);
+            console.log("hello");
+            let res = await contract.uploadByOur(
+              "hello",
+              "its samarth",
+              "insert data here"
+            );
+          }}
+        >
+          view
+        </button>
+        <button
+          onClick={async () => {
+            let signature = await provider.getSigner();
+            console.log(signature);
+            console.log("address->", await signature.getAddress());
+            let contract = new Contract(contractAddress, ABI.abi, signature);
+            console.log(contract);
+            let res = await contract.viewUserItsellf();
+            console.log(res);
+          }}
+        >
+          {" "}
+          history{" "}
+        </button>
+      </div>
       <div className="w-fit border-r-2 border-[#292929]  px-4">
         <h1 className="font-semibold text-[#e6e0e0] text-center my-5">
           Databases

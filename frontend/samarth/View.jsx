@@ -13,11 +13,7 @@ const View = () => {
       let add = await signature.getAddress();
       let contract = new Contract(contractAddress, ABI.abi, signature);
       let res = await contract.viewUserItsellf();
-      res = [
-        ["samar", "seee", 2221],
-        ["samar", "seee", 2221],
-        ["samar", "seee", 2221],
-      ];
+
       console.log(res);
       res.map((e) => {
         console.log(e[0]);
@@ -25,7 +21,8 @@ const View = () => {
           return prev.concat({
             userStatement: e[0],
             queryPoint: e[1],
-            time: e[2],
+            intent: e[2],
+            time: e[3],
           });
         });
       });
@@ -35,9 +32,9 @@ const View = () => {
   return (
     <div className="bg-gray-900 h-full flex flex-wrap  justify-evenly gap-x-14">
       {response &&
-        response.map((res) => {
+        response.map((res, idx) => {
           return (
-            <div className="min-w-52 ">
+            <div className="min-w-52 " key={idx}>
               <button
                 onClick={() => {
                   console.log(response);
@@ -48,6 +45,7 @@ const View = () => {
               <Card
                 statement={res.userStatement}
                 query={res.queryPoint}
+                intent={res.intent}
                 time={res.time}
               ></Card>
             </div>
