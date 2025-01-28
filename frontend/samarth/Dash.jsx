@@ -6,16 +6,21 @@ import { contractAddress, provider } from "../utils/connectchain";
 import { Contract } from "ethers";
 import ABI from "../../artifacts/contracts/Lock.sol/Lock.json";
 import { ExtractDataFromPara } from "@/app/api/InsertData/ExtractDataFromInsert";
+import Databases from "./component/Databases";
 const uri = "mongodb://localhost:27017/";
 
 const ChatGPTInterface = () => {
   let [add, setAdd] = useState("");
+  const [dbs, setDbs] = useState([
+    { name: "Localhost", url: "mongodb://localhost:27017/" },
+  ]);
   const [messages, setMessages] = useState(() => []);
   const [input, setInput] = useState("");
   const [allDatabases, setAllDatabase] = useState([]);
   const [anotherData, setAnotherData] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [nameOfOwner, setNameOfOwner] = useState("");
   const [readDataOperation, setReadDataOperation] = useState({
     response: [],
     flag: false,
@@ -301,9 +306,8 @@ const ChatGPTInterface = () => {
     <div
       className={`flex flex-row h-screen ${
         isDarkMode ? "bg-black text-white" : "bg-gray-100 text-gray-900"
-      }`}
-    >
-      <div>
+      }`}>
+      {/* <div>
         <button
           onClick={async () => {
             let signature = await provider.getSigner();
@@ -335,12 +339,18 @@ const ChatGPTInterface = () => {
           {" "}
           history{" "}
         </button>
-      </div>
-      <div className="w-fit border-r-2 border-[#292929]  px-4">
-        <h1 className="font-semibold text-[#e6e0e0] text-center my-5">
-          Databases
-        </h1>
-        <ul className="gap-2 flex flex-col">
+      </div> */}
+      <div className="flex flex-col justify-between ">
+        <div className="flex flex-row h-full">
+          <div className="w-fit border-r-2 border-[#292929]  px-4">
+            <h1 className="font-semibold text-[#e6e0e0] text-center my-5">
+              All Databases
+            </h1>
+
+            {dbs &&
+              dbs.map((e, index) => <Databases key={index} name={e.name} />)}
+
+            {/* <ul className="gap-2 flex flex-col">
           {allDatabases && allDatabases.length > 0 ? (
             allDatabases.map((db, index) => (
               <li
@@ -353,13 +363,13 @@ const ChatGPTInterface = () => {
           ) : (
             <p>No databases found.</p>
           )}
-        </ul>
-      </div>
-      <div className="w-fit border-r-2 border-[#292929]  px-4">
-        <h1 className="font-semibold text-[#e6e0e0] text-center my-5">
-          Databases of another
-        </h1>
-        <ul className="gap-2 flex flex-col">
+        </ul> */}
+          </div>
+          <div className="w-fit border-r-2 border-[#292929]  px-4">
+            <h1 className="font-semibold text-[#e6e0e0] text-center my-5">
+              All Collection
+            </h1>
+            {/* <ul className="gap-2 flex flex-col">
           {anotherData && anotherData.length > 0 ? (
             anotherData.map((db, index) => (
               <li
@@ -372,22 +382,31 @@ const ChatGPTInterface = () => {
           ) : (
             <p>No databases found.</p>
           )}
-        </ul>
-      </div>
+        </ul> */}
+          </div>
+        </div>
 
-      {/* Chat Messages */}
-      <div className="w-full h-screen flex flex-col justify-between">
-        <div className="flex flex-col items-center space-y-4 p-2">
+        <div className="flex flex-col px-2 items-center space-y-4 p-1 border-2 border-[#292929]">
           <h2 className="text-xl text-center text-white">Connect to MongoDB</h2>
           <input
             type="text"
             placeholder="Enter MongoDB Connection String"
             className={`px-4 py-2 rounded-lg focus:outline-none focus:ring-2 ${
               isDarkMode
-                ? "bg-[#292929] text-white focus:ring-[#787d81]"
-                : "bg-gray-100 text-black focus:ring-blue-400"
+                ? "bg-[#292929] text-white focus:ring-[#1a166d]"
+                : "bg-gray-100 text-black focus:ring-[#1a166d]"
             }`}
             onChange={(e) => setAdd(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Enter Name of Owner"
+            className={`px-4 py-2 rounded-lg focus:outline-none focus:ring-2 ${
+              isDarkMode
+                ? "bg-[#292929] text-white focus:ring-[#1a166d]"
+                : "bg-gray-100 text-black focus:ring-[#1a166d]"
+            }`}
+            onChange={(e) => setNameOfOwner(e.target.value)}
           />
           <button
             onClick={async () => {
@@ -420,6 +439,12 @@ const ChatGPTInterface = () => {
                 if (response.ok) {
                   console.log("Data from MongoDB:", result.databases);
                   setAnotherData(result.databases);
+                  if (!res && !nameOfOwner) {
+                    setDbs((prev) => [
+                      ...prev,
+                      { name: nameOfOwner, url: res },
+                    ]);
+                  }
                 } else {
                   console.error("API Error:", result.error);
                 }
@@ -427,19 +452,20 @@ const ChatGPTInterface = () => {
                 console.error("Error:", error.message);
               }
             }}
-            className="px-4 py-2 rounded-lg bg-[#787d81] text-white hover:bg-[#787d70]"
-          >
+            className="px-4 w-full py-2 rounded-lg bg-[#409e40] text-white hover:bg-[#3aa443]">
             Connect
           </button>
         </div>
+      </div>
+      {/* Chat Messages */}
+      <div className="w-full h-screen flex flex-col justify-between">
         <div className="flex flex-col h-full overflow-y-auto p-4 space-y-4 justify-center">
           {!loading &&
             readDataOperation.flag &&
             readDataOperation.response.map((obj, index) => (
               <div
                 key={index}
-                className="p-4 border rounded-lg bg-[#292929] text-white"
-              >
+                className="p-4 border rounded-lg bg-[#292929] text-white">
                 <pre>{JSON.stringify(obj, null, 2)}</pre>
               </div>
             ))}
@@ -461,8 +487,7 @@ const ChatGPTInterface = () => {
         <div
           className={`p-4 border-t ${
             isDarkMode ? "border-[#292929] " : "border-gray-300 bg-white"
-          }`}
-        >
+          }`}>
           <div className="flex items-center space-x-3 p-2">
             <input
               type="text"
@@ -488,8 +513,7 @@ const ChatGPTInterface = () => {
                   handleSend();
                 }
               }}
-              onClick={handleSend}
-            >
+              onClick={handleSend}>
               Send
             </button>
           </div>
