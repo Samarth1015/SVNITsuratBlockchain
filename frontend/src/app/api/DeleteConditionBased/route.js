@@ -61,7 +61,7 @@ async function readConditionData(nameOfDB, nameOfCollection, atrs , MongodbUri) 
 }
 
 // Delete function
-async function DeleteConditionBased(nameOfDB, nameOfCollection, atrs, MongodbUri) {
+export async function DeleteConditionBased(nameOfDB, nameOfCollection, atrs, MongodbUri) {
   const client = new MongoClient(MongodbUri);
 
   try {

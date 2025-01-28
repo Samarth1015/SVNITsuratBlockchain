@@ -26,7 +26,7 @@ async function handler(req) {
   }
 }
 
-async function createDb(nameOfDB, nameOfCollection, dataInArray , MongodbUri) {
+export async function createDb(nameOfDB, nameOfCollection, dataInArray , MongodbUri) {
   let uri = MongodbUri
   const client = new MongoClient(uri);
   try {

@@ -1,6 +1,6 @@
 const { MongoClient } = require("mongodb");
 
-async function DeleteCollection(nameOfDB, nameOfCollection, MongoDbUri) {
+export async function DeleteCollection(nameOfDB, nameOfCollection, MongoDbUri) {
   const client = new MongoClient(MongoDbUri);
 
   if (!nameOfDB || !nameOfCollection) {

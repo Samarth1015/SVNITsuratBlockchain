@@ -30,7 +30,7 @@ export async function POST(req) {
 }
 
 // The readConditionData function (your original code, no changes made here)
-async function readConditionData(nameOfDB, nameOfCollection, atrs , MongoDbUri) {
+export async function readConditionData(nameOfDB, nameOfCollection, atrs , MongoDbUri) {
   let uri = MongoDbUri;
   const client = new MongoClient(uri);
   try {

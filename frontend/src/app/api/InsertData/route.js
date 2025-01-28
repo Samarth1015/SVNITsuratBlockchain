@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 import { NextResponse } from "next/server";
 // insertData function
-async function insertData(nameOfDB, nameOfColletion, data, MongodbUri) {
+export async function insertData(nameOfDB, nameOfColletion, data, MongodbUri) {
   let uri = MongodbUri;
   const client = new MongoClient(uri);
 

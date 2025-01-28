@@ -72,7 +72,7 @@ async function readConditionData(nameOfDB, nameOfCollection, atrs, MongoDbUri) {
 }
 
 // updateData function
-async function updateData(nameOfDB, nameOfCollection, atrs, changeAtrs, MongoDbUri) {
+export async function updateData(nameOfDB, nameOfCollection, atrs, changeAtrs, MongoDbUri) {
   const client = new MongoClient(MongoDbUri);
 
   try {

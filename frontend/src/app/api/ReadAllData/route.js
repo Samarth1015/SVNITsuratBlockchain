@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
 import { NextResponse } from 'next/server';
-async function readAllData(nameOfDB, nameOfCollection, MongodbUri) {
+export async function readAllData(nameOfDB, nameOfCollection, MongodbUri) {
   const uri = MongodbUri;
   const client = new MongoClient(uri);
   try {
