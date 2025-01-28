@@ -1,6 +1,7 @@
 import { MongoClient } from "mongodb";
 import { NextResponse } from "next/server";
 import {sendReqToModel} from './SendReqToModel.js' 
+import { HandleCrudFuncutions } from "./HandleCrudFuncations.js";
 export async function POST(req) {
   try {
     // Extract data from the request body
@@ -19,8 +20,8 @@ export async function POST(req) {
       );
     }
 
-    const [intent , ... rest] = await sendReqToModel(paragraph);
-    
+    const [intent , ...rest] = await sendReqToModel(paragraph);
+   const resFromHandleCRUD = await  HandleCrudFuncutions(intent , nameOfDB , nameOfCollection , MongoDbUri , paragraph);
 
 
 
