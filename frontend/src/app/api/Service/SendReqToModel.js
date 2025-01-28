@@ -1,20 +1,32 @@
-import { axios } from "axios";
-
 export async function sendReqToModel(paragraph) {
   const data = {
     paragraph: paragraph,
   };
-  axios
-    .post("/http://192.168.1.14:5000/getIntent", JSON.stringify(data))
-    .then(function (response) {
-      const ResponseFromModel = [
-        response.intent,
-        response["DB_info"].split(/[\s,]+/)[0],
-        response["DB_info"].split(/[\s,]+/)[1],
-      ];
-      return ResponseFromModel;
-    })
-    .catch(function (error) {
-      console.log(error);
+
+  try {
+    const response = await fetch("http://192.168.1.14:5000/getIntent", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
     });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    const ResponseFromModel = [
+      result.intent,
+      result["DB_info"].split(/[\s,]+/)[0],
+      result["DB_info"].split(/[\s,]+/)[1],
+    ];
+
+    return ResponseFromModel;
+  } catch (error) {
+    console.error("Error in sendReqToModel:", error);
+    throw error; // Rethrow error to be handled by the calling code
+  }
 }

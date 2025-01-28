@@ -22,13 +22,13 @@ export async function HandleCrudFuncutions(
   } 
   else if (String(intent).toLowerCase() === "read") {
     const res = await readAllData(nameOfDB, nameOfCollection, MongoDbUri);
-    const responseFromNextServer = await res.json();
+    const responseFromNextServer =  res;
 
     return responseFromNextServer;
   } 
   else if (String(intent).toLowerCase() === "delete") {
     const res = await DeleteCollection(nameOfDB, nameOfCollection, MongoDbUri);
-    const responseFromNextServer = await res.json();
+    const responseFromNextServer = res;
     return responseFromNextServer;
   } 
   else if (String(intent).toLowerCase() === "delete_conditioned_based") {
@@ -39,7 +39,7 @@ export async function HandleCrudFuncutions(
       filter,
       MongoDbUri
     );
-    const responseFromNextServer = await res.json();
+    const responseFromNextServer =  res;
     return responseFromNextServer;
   } 
   else if (String(intent).toLowerCase() === "read_condition_based_data") {
@@ -51,7 +51,7 @@ export async function HandleCrudFuncutions(
       filter,
       MongoDbUri
     );
-    const responseFromNextServer = await res.json();
+    const responseFromNextServer =  res;
     return responseFromNextServer;
   } else if (String(intent).toLowerCase() === "insert") {
     const res = await insertData(
@@ -60,7 +60,7 @@ export async function HandleCrudFuncutions(
       data[0],
       MongoDbUri
     );
-    const responseFromNextServer = await res.json();
+    const responseFromNextServer =  res;
     return responseFromNextServer;
   } else {
     const filter = parseQuery(paragraph)
@@ -72,7 +72,7 @@ export async function HandleCrudFuncutions(
       data[0],
       MongoDbUri
     );
-    const responseFromNextServer = await res.json();
+    const responseFromNextServer =  res;
     return responseFromNextServer;
   }
 }
