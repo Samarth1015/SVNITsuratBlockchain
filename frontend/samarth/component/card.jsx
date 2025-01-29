@@ -33,6 +33,8 @@ export default function Card({ statement, query, intent, transaction, date }) {
             className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
             onClick={async () => {
               if (intent === "delete") {
+                //completer from here
+                // let res await fetch("/api/insertDeleted", {method })
               }
             }}
           >

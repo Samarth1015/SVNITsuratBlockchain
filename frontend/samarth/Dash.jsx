@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { parseQuery } from "./ExtraFuncation_Jenil/Read_Condition_based";
 import Sideelement from "./component/Sideelement";
 import { contractAddress, provider } from "../utils/connectchain";
-import { Contract } from "ethers";
+import { Contract, Transaction } from "ethers";
 import ABI from "../../artifacts/contracts/Lock.sol/Lock.json";
 import { ExtractDataFromPara } from "@/app/api/InsertData/ExtractDataFromInsert";
 import Databases from "./component/Databases";
@@ -214,8 +214,6 @@ const ChatGPTInterface = () => {
       });
       const data = await QueryDone.json();
 
-      // yahaa seee insert karvanaaa haii mujhe ye dataaa mere db mnaiiiiii
-
       setGeneralOpeeration({
         response: `${data["deletedCount"]} entries deleted!!`,
         flag: true,
@@ -226,6 +224,18 @@ const ChatGPTInterface = () => {
       let contract = new Contract(contractAddress, ABI.abi, signature);
       console.log(contract);
       let random = generateRandom();
+      // yahaa seee insert karvanaaa haii mujhe ye dataaa mere db mnaiiiiii
+      const res = await fetch("/api/inserDeleted", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          data: data["data"],
+          hash: random,
+        }),
+      });
+
       await contract.uploadByOur(
         input,
         `${data["message"]} entries Inseted In DB!!`,
