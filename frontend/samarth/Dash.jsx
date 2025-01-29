@@ -486,7 +486,7 @@ const ChatGPTInterface = () => {
                 console.error("Error:", error.message);
               }
             }}
-            className="px-4 w-full py-2 rounded-lg bg-[#409e40] text-white hover:bg-[#3aa443]"
+            className="px-4 w-full py-2 rounded-lg cs"
           >
             Connect
           </button>
@@ -525,10 +525,11 @@ const ChatGPTInterface = () => {
             isDarkMode ? "border-[#292929] " : "border-gray-300 bg-white"
           }`}
         >
-          <div className="flex items-center space-x-3 p-2">
-            <input
+          <div className="w-full flex items-center space-x-3 ">
+           <div className="card w-full hover:p-1">
+           <input
               type="text"
-              className={`flex-1  px-4 py-10 rounded-lg focus:outline-none focus:ring-2 ${
+              className={` card2 h-3 w-full flex-1  px-4 py-10  focus:outline-none focus:ring-2 ${
                 isDarkMode
                   ? "bg-[#292929] text-white focus:ring-[#787d81]"
                   : "bg-gray-100 text-black focus:ring-blue-400"
@@ -538,12 +539,9 @@ const ChatGPTInterface = () => {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
             />
+           </div>
             <button
-              className={`px-4 py-2 rounded-lg ${
-                isDarkMode
-                  ? "bg-[#787d81] text-white hover:bg-[#787d70]"
-                  : "bg-[#787d81] text-white hover:bg-[#787d70]"
-              }`}
+              className={`cs px-4 py-2 rounded-lg `}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault(); // Prevent unexpected default actions
