@@ -1,43 +1,52 @@
 import { MongoClient } from "mongodb";
 
-const client = new MongoClient(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-export default async function POST(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method Not Allowed" });
+const client = new MongoClient(
+  "mongodb+srv://jenilparmar:dsfkjnksdfaa@cluster0.utm2zr0.mongodb.net/",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
   }
+);
 
+async function connectDB() {
+  if (!client.topology || !client.topology.isConnected()) {
+    await client.connect();
+  }
+}
+
+export async function POST(req) {
   try {
-    // Connect to the MongoDB database
-    if (!client.isConnected()) {
-      await client.connect();
-    }
+    await connectDB();
+    const db = client.db("userData");
+    const collection = db.collection("deletedData");
 
-    const db = client.db(); // Use the default database
-    const collection = db.collection("deletedData"); // Your collection name
-
-    const { data, hash } = req.body;
+    const { data, hash } = await req.json(); // Correct way to parse request body in Next.js App Router
+    console.log({ data, hash });
 
     if (!data || !hash) {
-      return res.status(400).json({ message: "Missing required fields" });
+      return new Response(
+        JSON.stringify({ message: "Missing required fields" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
-    // Insert the deleted data directly into the collection
-    const result = await collection.insertOne({
-      data,
-      hash,
-    });
+    const result = await collection.insertOne({ data, hash });
 
-    return res
-      .status(201)
-      .json({ message: "Data inserted successfully", data: result.ops[0] });
+    return new Response(
+      JSON.stringify({
+        message: "Data inserted successfully",
+        insertedId: result.insertedId,
+      }),
+      { status: 201, headers: { "Content-Type": "application/json" } }
+    );
   } catch (error) {
     console.error("Error inserting data:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
-  } finally {
-    await client.close();
+    return new Response(JSON.stringify({ message: "Internal Server Error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }

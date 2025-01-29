@@ -1,4 +1,9 @@
+import { hash } from "crypto";
+import { useState } from "react";
+
 export default function Card({ statement, query, intent, transaction, date }) {
+  let [input, setInput] = useState({ dbName: "", collectionName: "" });
+  let [names, setNames] = useState(false);
   console.log(intent);
   return (
     <div className="max-w-sm mx-auto my-4 p-6 bg-gradient-to-br from-white to-gray-50 border border-gray-100 rounded-2xl shadow-2xl hover:shadow-3xl transition-shadow duration-300 transform hover:-translate-y-1">
@@ -15,11 +20,34 @@ export default function Card({ statement, query, intent, transaction, date }) {
         </p>
       </div>
       <div className="mb-6">
-        <h3 className="text-xl font-semibold text-gray-900 mb-3">Query</h3>
+        <h3 className="text-xl font-semibold text-gray-900 mb-3">
+          transaction id{" "}
+        </h3>
         <p className="text-md text-gray-700 leading-relaxed bg-gray-50 p-4 rounded-lg border border-gray-100">
           {transaction}
         </p>
       </div>
+      {names ? (
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold text-gray-900 mb-3">Add </h3>
+          <input
+            type="text"
+            className="text-md text-gray-700 leading-relaxed bg-gray-50 p-4 rounded-lg border border-gray-100"
+            placeholder="database name"
+            onChange={(e) => setInput({ ...input, dbName: e.target.value })}
+          />
+          <input
+            type="text"
+            className="text-md text-gray-700 leading-relaxed bg-gray-50 p-4 rounded-lg border border-gray-100"
+            placeholder="collection name"
+            onChange={(e) =>
+              setInput({ ...input, collectionName: e.target.value })
+            }
+          />
+        </div>
+      ) : (
+        <></>
+      )}
       <div className="flex items-center justify-between">
         <p className="text-xs text-gray-500 italic">
           {new Date(date).toLocaleDateString("en-US", {
@@ -32,9 +60,29 @@ export default function Card({ statement, query, intent, transaction, date }) {
           <button
             className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
             onClick={async () => {
+              setNames(true);
+
               if (intent === "delete") {
-                //completer from here
-                // let res await fetch("/api/insertDeleted", {method })
+                let res = await fetch("/api/getdeleteddata", {
+                  method: "POST",
+                  body: JSON.stringify({
+                    hash: transaction,
+                  }),
+                });
+                let reso = await res.json();
+                console.log(reso.data.data);
+                console.log(input.dbName, input.collectionName, reso.data.data);
+
+                let re = await fetch("/api/InsertData", {
+                  method: "POST",
+                  body: JSON.stringify({
+                    nameOfDB: input.dbName,
+                    nameOfColletion: input.collectionName,
+                    data: reso.data.data,
+                    MongodbUri: "mongodb://localhost:27017",
+                  }),
+                });
+                console.log(re);
               }
             }}
           >

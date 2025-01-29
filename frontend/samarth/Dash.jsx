@@ -11,16 +11,6 @@ import { generateRandom } from "../utils/generateRandom";
 const uri = "mongodb://localhost:27017/";
 
 const ChatGPTInterface = () => {
-  let clicking = async () => {
-    let signature = await provider.getSigner();
-    console.log(signature);
-    console.log("address->", await signature.getAddress());
-    let contract = new Contract(contractAddress, ABI.abi, signature);
-    console.log(contract);
-    let random = window.crypto.randomUUID().replace(/-/g, "").slice(0, 16);
-    console.log(random);
-    await contract.uploadByOur("hi", `hello`, "update", `${random}`);
-  };
   let [add, setAdd] = useState("");
   const [dbs, setDbs] = useState([
     { name: "Localhost", url: "mongodb://localhost:27017/" },
@@ -223,8 +213,10 @@ const ChatGPTInterface = () => {
       console.log("address->", await signature.getAddress());
       let contract = new Contract(contractAddress, ABI.abi, signature);
       console.log(contract);
-      let random = generateRandom();
+      const random = window.crypto.randomUUID().replace(/-/g, "").slice(0, 16);
+      console.log(random);
       // yahaa seee insert karvanaaa haii mujhe ye dataaa mere db mnaiiiiii
+      console.log("this is data in delete----->", data["data"]);
       const res = await fetch("/api/inserDeleted", {
         method: "POST",
         headers: {
@@ -235,10 +227,17 @@ const ChatGPTInterface = () => {
           hash: random,
         }),
       });
-
+      console.log(
+        "---->",
+        "delted condition based",
+        contract,
+        input,
+        `${data["deletedCount"]} entries deleted In DB!!`,
+        `${random}`
+      );
       await contract.uploadByOur(
         input,
-        `${data["message"]} entries Inseted In DB!!`,
+        `${data["deletedCount"]} entries deleted In DB!!`,
         "delete",
         `${random}`
       );
@@ -372,9 +371,6 @@ const ChatGPTInterface = () => {
         </button>
       </div> */}
       <div className="flex flex-col justify-between ">
-        <div>
-          <button onClick={clicking}>viewsss</button>
-        </div>
         <div className="flex flex-row h-full">
           <div className="w-fit border-r-2 border-[#292929]  px-4">
             <h1 className="font-semibold text-[#e6e0e0] text-center my-5">
@@ -526,20 +522,20 @@ const ChatGPTInterface = () => {
           }`}
         >
           <div className="w-full flex items-center space-x-3 ">
-           <div className="card w-full hover:p-1">
-           <input
-              type="text"
-              className={` card2 h-3 w-full flex-1  px-4 py-10  focus:outline-none focus:ring-2 ${
-                isDarkMode
-                  ? "bg-[#292929] text-white focus:ring-[#787d81]"
-                  : "bg-gray-100 text-black focus:ring-blue-400"
-              }`}
-              placeholder="Kindly Type Your Query"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSend()}
-            />
-           </div>
+            <div className="card w-full hover:p-1">
+              <input
+                type="text"
+                className={` card2 h-3 w-full flex-1  px-4 py-10  focus:outline-none focus:ring-2 ${
+                  isDarkMode
+                    ? "bg-[#292929] text-white focus:ring-[#787d81]"
+                    : "bg-gray-100 text-black focus:ring-blue-400"
+                }`}
+                placeholder="Kindly Type Your Query"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSend()}
+              />
+            </div>
             <button
               className={`cs px-4 py-2 rounded-lg `}
               onKeyDown={(e) => {
