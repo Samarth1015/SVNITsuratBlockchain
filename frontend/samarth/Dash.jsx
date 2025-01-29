@@ -7,6 +7,7 @@ import { Contract } from "ethers";
 import ABI from "../../artifacts/contracts/Lock.sol/Lock.json";
 import { ExtractDataFromPara } from "@/app/api/InsertData/ExtractDataFromInsert";
 import Databases from "./component/Databases";
+import { generateRandom } from "../utils/generateRandom";
 const uri = "mongodb://localhost:27017/";
 
 const ChatGPTInterface = () => {
@@ -177,10 +178,12 @@ const ChatGPTInterface = () => {
       console.log("address->", await signature.getAddress());
       let contract = new Contract(contractAddress, ABI.abi, signature);
       console.log(contract);
+      let random = generateRandom();
       await contract.uploadByOur(
         input,
         `${data["message"]} entries Inseted In DB!!`,
-        "update"
+        "update",
+        `${random}`
       );
     } else if (intent == "DELETE_CONDITIONED_BASED".toLowerCase()) {
       console.log("In Delete Condition based!!!");
@@ -209,10 +212,12 @@ const ChatGPTInterface = () => {
       console.log("address->", await signature.getAddress());
       let contract = new Contract(contractAddress, ABI.abi, signature);
       console.log(contract);
+      let random = generateRandom();
       await contract.uploadByOur(
         input,
         `${data["message"]} entries Inseted In DB!!`,
-        "delete"
+        "delete",
+        `${random}`
       );
     } else if (intent == "READ_CONDITION_BASED_DATA".toLowerCase()) {
       console.log("IN Read condition data");
@@ -278,10 +283,12 @@ const ChatGPTInterface = () => {
       console.log("address->", await signature.getAddress());
       let contract = new Contract(contractAddress, ABI.abi, signature);
       console.log(contract);
+      let random = generateRandom();
       await contract.uploadByOur(
         input,
         `${data["insertedCount"]} entries Inseted In DB!!`,
-        "insert"
+        "insert",
+        `${random}`
       );
       // await contract.uploadByOur(
       //   input,
@@ -306,7 +313,8 @@ const ChatGPTInterface = () => {
     <div
       className={`flex flex-row h-screen ${
         isDarkMode ? "bg-black text-white" : "bg-gray-100 text-gray-900"
-      }`}>
+      }`}
+    >
       {/* <div>
         <button
           onClick={async () => {
@@ -452,7 +460,8 @@ const ChatGPTInterface = () => {
                 console.error("Error:", error.message);
               }
             }}
-            className="px-4 w-full py-2 rounded-lg bg-[#409e40] text-white hover:bg-[#3aa443]">
+            className="px-4 w-full py-2 rounded-lg bg-[#409e40] text-white hover:bg-[#3aa443]"
+          >
             Connect
           </button>
         </div>
@@ -465,7 +474,8 @@ const ChatGPTInterface = () => {
             readDataOperation.response.map((obj, index) => (
               <div
                 key={index}
-                className="p-4 border rounded-lg bg-[#292929] text-white">
+                className="p-4 border rounded-lg bg-[#292929] text-white"
+              >
                 <pre>{JSON.stringify(obj, null, 2)}</pre>
               </div>
             ))}
@@ -487,7 +497,8 @@ const ChatGPTInterface = () => {
         <div
           className={`p-4 border-t ${
             isDarkMode ? "border-[#292929] " : "border-gray-300 bg-white"
-          }`}>
+          }`}
+        >
           <div className="flex items-center space-x-3 p-2">
             <input
               type="text"
@@ -513,7 +524,8 @@ const ChatGPTInterface = () => {
                   handleSend();
                 }
               }}
-              onClick={handleSend}>
+              onClick={handleSend}
+            >
               Send
             </button>
           </div>

@@ -22,7 +22,8 @@ const View = () => {
             userStatement: e[0],
             queryPoint: e[1],
             intent: e[2],
-            time: e[3],
+            transaction: e[3],
+            time: e[4],
           });
         });
       });
@@ -46,6 +47,7 @@ const View = () => {
                 statement={res.userStatement}
                 query={res.queryPoint}
                 intent={res.intent}
+                transaction={res.transaction}
                 time={res.time}
               ></Card>
             </div>

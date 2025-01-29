@@ -10,6 +10,7 @@ contract Lock {
         string userStatement;
         string queryPoint;
         string intent;
+        string transactionId;
         uint time;
     }
 
@@ -28,6 +29,7 @@ contract Lock {
         address _user,
         string memory _userStatement,
         string memory _queryPoint,
+        string memory _transactionId,
         string memory _intent
     ) public {
         require(
@@ -36,16 +38,29 @@ contract Lock {
         );
         console.log("userStatement: %s", _intent);
         contentList[_user].push(
-            content(_userStatement, _queryPoint, _intent, block.timestamp)
+            content(
+                _userStatement,
+                _queryPoint,
+                _transactionId,
+                _intent,
+                block.timestamp
+            )
         );
     }
     function uploadByOur(
         string memory _userStatement,
         string memory _queryPoint,
+        string memory _transactionId,
         string memory _intent
     ) public {
         contentList[msg.sender].push(
-            content(_userStatement, _queryPoint, _intent, block.timestamp)
+            content(
+                _userStatement,
+                _queryPoint,
+                _transactionId,
+                _intent,
+                block.timestamp
+            )
         );
     }
 
