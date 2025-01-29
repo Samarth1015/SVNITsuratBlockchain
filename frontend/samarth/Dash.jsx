@@ -11,6 +11,16 @@ import { generateRandom } from "../utils/generateRandom";
 const uri = "mongodb://localhost:27017/";
 
 const ChatGPTInterface = () => {
+  let clicking = async () => {
+    let signature = await provider.getSigner();
+    console.log(signature);
+    console.log("address->", await signature.getAddress());
+    let contract = new Contract(contractAddress, ABI.abi, signature);
+    console.log(contract);
+    let random = window.crypto.randomUUID().replace(/-/g, "").slice(0, 16);
+    console.log(random);
+    await contract.uploadByOur("hi", `hello`, "update", `${random}`);
+  };
   let [add, setAdd] = useState("");
   const [dbs, setDbs] = useState([
     { name: "Localhost", url: "mongodb://localhost:27017/" },
@@ -203,6 +213,9 @@ const ChatGPTInterface = () => {
         }),
       });
       const data = await QueryDone.json();
+
+      // yahaa seee insert karvanaaa haii mujhe ye dataaa mere db mnaiiiiii
+
       setGeneralOpeeration({
         response: `${data["deletedCount"]} entries deleted!!`,
         flag: true,
@@ -349,6 +362,9 @@ const ChatGPTInterface = () => {
         </button>
       </div> */}
       <div className="flex flex-col justify-between ">
+        <div>
+          <button onClick={clicking}>viewsss</button>
+        </div>
         <div className="flex flex-row h-full">
           <div className="w-fit border-r-2 border-[#292929]  px-4">
             <h1 className="font-semibold text-[#e6e0e0] text-center my-5">

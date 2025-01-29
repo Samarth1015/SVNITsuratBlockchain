@@ -2,7 +2,7 @@ import { MongoClient } from "mongodb";
 import { ObjectId } from "mongodb";
 import { NextResponse } from "next/server";
 // The existing readConditionData function
-async function readConditionData(nameOfDB, nameOfCollection, atrs , MongodbUri) {
+async function readConditionData(nameOfDB, nameOfCollection, atrs, MongodbUri) {
   const client = new MongoClient(MongodbUri);
   try {
     await client.connect();
@@ -61,7 +61,12 @@ async function readConditionData(nameOfDB, nameOfCollection, atrs , MongodbUri) 
 }
 
 // Delete function
-export async function DeleteConditionBased(nameOfDB, nameOfCollection, atrs, MongodbUri) {
+export async function DeleteConditionBased(
+  nameOfDB,
+  nameOfCollection,
+  atrs,
+  MongodbUri
+) {
   const client = new MongoClient(MongodbUri);
 
   try {
@@ -69,16 +74,22 @@ export async function DeleteConditionBased(nameOfDB, nameOfCollection, atrs, Mon
     const database = client.db(nameOfDB);
     const collection = database.collection(nameOfCollection);
 
-    const dataToUpdate = await readConditionData(nameOfDB, nameOfCollection, atrs, MongodbUri);
+    const dataToUpdate = await readConditionData(
+      nameOfDB,
+      nameOfCollection,
+      atrs,
+      MongodbUri
+    );
     const response = [];
 
     for (const data of dataToUpdate) {
       const filter = { _id: new ObjectId(data._id) };
-      const result = await collection.deleteOne(filter);
+      const result = await collection.findOneAndDelete(filter);
       response.push(result);
     }
+    console.log(response);
     console.log(`${response.length} data affected!`);
-    return { success: true, deletedCount: response.length };
+    return { success: true, deletedCount: response.length, data: response };
   } catch (error) {
     console.error("Error deleting data:", error);
     return { success: false, message: "Error deleting data" };
@@ -102,13 +113,17 @@ export async function POST(req) {
     }
 
     // Call DeleteConditionBased
-    const result = await DeleteConditionBased(nameOfDB, nameOfCollection, atrs, MongoDbUri);
+    const result = await DeleteConditionBased(
+      nameOfDB,
+      nameOfCollection,
+      atrs,
+      MongoDbUri
+    );
 
     // Return the result of the deletion
-    return new NextResponse(
-      JSON.stringify(result),
-      { status: result.success ? 200 : 500 }
-    );
+    return new NextResponse(JSON.stringify(result), {
+      status: result.success ? 200 : 500,
+    });
   } catch (error) {
     return new NextResponse(
       JSON.stringify({ success: false, message: error.message }),
