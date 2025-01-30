@@ -31,7 +31,7 @@ const View = () => {
     fetchHistory();
   }, []);
   return (
-    <div className="bg-gray-900 h-full flex flex-wrap  justify-evenly gap-x-14">
+    <div className="bg-gray-900 min-h-screen max-h-fit flex flex-wrap  justify-evenly gap-x-14">
       {response &&
         response.map((res, idx) => {
           return (
