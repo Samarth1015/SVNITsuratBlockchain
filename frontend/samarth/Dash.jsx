@@ -8,6 +8,7 @@ import ABI from "../../artifacts/contracts/Lock.sol/Lock.json";
 import { ExtractDataFromPara } from "@/app/api/InsertData/ExtractDataFromInsert";
 import Databases from "./component/Databases";
 import { generateRandom } from "../utils/generateRandom";
+import Image from "next/image";
 const uri = "mongodb://localhost:27017/";
 
 const ChatGPTInterface = () => {
@@ -125,6 +126,8 @@ const ChatGPTInterface = () => {
         }),
       });
       const data = await QueryDone.json();
+      setReadDataOperation(false);
+
       setGeneralOpeeration({
         flag: true,
         response: "Done Creation Operation!!",
@@ -150,6 +153,7 @@ const ChatGPTInterface = () => {
         }),
       });
       const data = await QueryDone.json();
+      setReadDataOperation(false);
       setGeneralOpeeration({
         flag: true,
         response: data["message"],
@@ -169,6 +173,8 @@ const ChatGPTInterface = () => {
         }),
       });
       const data = await QueryDone.json();
+      setReadDataOperation(false);
+
       setGeneralOpeeration({
         flag: true,
         response: data["message"],
@@ -203,6 +209,7 @@ const ChatGPTInterface = () => {
         }),
       });
       const data = await QueryDone.json();
+      setReadDataOperation(false);
 
       setGeneralOpeeration({
         response: `${data["deletedCount"]} entries deleted!!`,
@@ -291,6 +298,8 @@ const ChatGPTInterface = () => {
         }),
       });
       const data = await QueryDone.json();
+      setReadDataOperation(false);
+
       setGeneralOpeeration({
         response: `${data["insertedCount"]} entries Inseted In DB!!`,
         flag: true,
@@ -335,8 +344,7 @@ const ChatGPTInterface = () => {
     <div
       className={`flex flex-row h-screen ${
         isDarkMode ? "bg-black text-white" : "bg-gray-100 text-gray-900"
-      }`}
-    >
+      }`}>
       {/* <div>
         <button
           onClick={async () => {
@@ -482,8 +490,7 @@ const ChatGPTInterface = () => {
                 console.error("Error:", error.message);
               }
             }}
-            className="px-4 w-full py-2 rounded-lg cs"
-          >
+            className="px-4 w-full py-2 rounded-lg cs">
             Connect
           </button>
         </div>
@@ -496,8 +503,7 @@ const ChatGPTInterface = () => {
             readDataOperation.response.map((obj, index) => (
               <div
                 key={index}
-                className="p-4 border rounded-lg bg-[#292929] text-white"
-              >
+                className="p-4 border rounded-lg bg-[#292929] text-white">
                 <pre>{JSON.stringify(obj, null, 2)}</pre>
               </div>
             ))}
@@ -508,9 +514,12 @@ const ChatGPTInterface = () => {
           )}
           {loading && (
             <>
-              <p className="animate-pulse duration-150 self-center text-center text-4xl">
-                UnderStanding The Query.. 🙂
-              </p>
+              <img className="self-center opacity-80"
+                src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMXlwdG4xYXExMmNuOWFpc2hveWdrMnZqMzdmMjhoNG50M2ZtdWE0NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/tAjb5pyCEBhEb8jWxC/giphy.gif"
+                height="200"
+                width="250"
+                alt="GIF"
+              />
             </>
           )}
         </div>
@@ -519,8 +528,7 @@ const ChatGPTInterface = () => {
         <div
           className={`p-4 border-t ${
             isDarkMode ? "border-[#292929] " : "border-gray-300 bg-white"
-          }`}
-        >
+          }`}>
           <div className="w-full flex items-center space-x-3 ">
             <div className="card w-full hover:p-1">
               <input
@@ -544,8 +552,7 @@ const ChatGPTInterface = () => {
                   handleSend();
                 }
               }}
-              onClick={handleSend}
-            >
+              onClick={handleSend}>
               Send
             </button>
           </div>
