@@ -509,7 +509,7 @@ const ChatGPTInterface = () => {
             ))}
           {generalOperation.flag && (
             <>
-              <p className="text-white">{generalOperation.response}</p>
+              <p className="text-green-500 text-6xl font-bold self-center">{generalOperation.response}</p>
             </>
           )}
           {loading && (
