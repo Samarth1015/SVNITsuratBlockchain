@@ -1,4 +1,5 @@
 import { hash } from "crypto";
+import { url } from "inspector";
 import { useState } from "react";
 
 export default function Card({ statement, query, intent, transaction, date }) {
@@ -61,6 +62,38 @@ export default function Card({ statement, query, intent, transaction, date }) {
             className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
             onClick={async () => {
               setNames(true);
+              if (intent === "insert") {
+                try {
+                  let res = await fetch("/api/RevertInsert", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json", // ✅ Fix: Specify content type
+                    },
+                    body: JSON.stringify({
+                      nameOfDb: input.dbName,
+                      nameOfCollection: input.collectionName,
+                      paragraph: query,
+                      MongodbURI: "mongodb://localhost:27017",
+                    }),
+                  });
+
+                  if (!res.ok) {
+                    throw new Error(`HTTP error! Status: ${res.status}`); // ✅ Fix: Handle HTTP errors
+                  }
+
+                  let reso = await res.json();
+                  console.log(reso?.message || "No message returned"); // ✅ Fix: Avoid potential undefined errors
+
+                  if (reso?.statusCode === 200) {
+                    alert("Data Reverted Successfully!!");
+                  } else {
+                    console.warn("Revert failed:", reso);
+                  }
+                } catch (error) {
+                  console.error("Error in RevertInsert:", error); // ✅ Fix: Proper error handling
+                  alert("Failed to revert data.");
+                }
+              }
 
               if (intent === "delete") {
                 let res = await fetch("/api/getdeleteddata", {
@@ -84,8 +117,7 @@ export default function Card({ statement, query, intent, transaction, date }) {
                 });
                 console.log(re);
               }
-            }}
-          >
+            }}>
             Revert
           </button>
         ) : (
