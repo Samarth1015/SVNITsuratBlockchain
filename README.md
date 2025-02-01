@@ -14,7 +14,7 @@ The core of CRUDLingo integrates **blockchain technology** to maintain a secure 
 
 ## Technology Stack
 - **Frontend and Backend**: NEXTJS 🌐
-- **AI/ML**: DistilBERT, Gemini API(Python) 🤖
+- **AI/ML**: DistilBERT, Python 🤖
 - **Blockchain**: Custom blockchain implementation for operation history and state management 🛠️
 
 ## Getting Started
